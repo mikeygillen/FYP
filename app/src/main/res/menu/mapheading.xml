@@ -40,6 +40,17 @@
         </menu>
     </item>
 
+    <item android:id="@+id/south"
+        android:title="South Dublin"
+        app:showAsAction="never">
+        <menu>
+            <item android:id="@+id/heatmapsouth"
+                android:title="Heatmap"/>
+            <item android:id="@+id/markersouth"
+                android:title="Marker"/>
+        </menu>
+    </item>
+
     <item android:id="@+id/logout"
         android:icon="@drawable/ic_logout"
         android:title="Logout"

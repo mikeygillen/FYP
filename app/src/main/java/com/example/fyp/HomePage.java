@@ -8,14 +8,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -40,7 +35,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
-
+    private static final String TAG = "HomePageActivity";
     private GoogleMap mMap;
 
     private LocationRequest mLocationRequest;
@@ -58,7 +53,7 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         }
         FirebaseUser user = firebaseAuth.getCurrentUser();
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.MainMap);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
@@ -90,13 +85,18 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
                 return true;
             case R.id.markerfingal:
                 marker(R.raw.fingal);
-                //Toast.makeText(this, "Display all markers for fingal", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.heatmapcity:
                 heatmap("dublin.json");
                 return true;
             case R.id.markercity:
                 marker(R.raw.dublin);
+                return true;
+            case R.id.heatmapsouth:
+                heatmap("south.json");
+                return true;
+            case R.id.markersouth:
+                marker(R.raw.south);
                 return true;
             case R.id.logout:
                 firebaseAuth.signOut();
