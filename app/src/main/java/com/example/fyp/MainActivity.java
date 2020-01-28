@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity{
     @BindView(R.id.btn_signup) Button _signupButton;
     @BindView(R.id.link_login) TextView _loginLink;
 
-    private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
 
 
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        progressDialog = new ProgressDialog(this);
         firebaseAuth = FirebaseAuth.getInstance();
 
         if(firebaseAuth.getCurrentUser() !=null){
@@ -62,6 +60,7 @@ public class MainActivity extends AppCompatActivity{
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
                 finish();
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
             }
         });
     }

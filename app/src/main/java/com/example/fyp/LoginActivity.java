@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
@@ -49,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 userLogin();
@@ -57,7 +57,6 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         _signupLink.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 // Start the Signup activity
@@ -86,17 +85,19 @@ public class LoginActivity extends AppCompatActivity {
         String password = _passwordText.getText().toString().trim();
 
         // TODO: Implement your own authentication logic here.
+
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task){
-                        progressDialog.dismiss();
+                        //progressDialog.dismiss();
                         if(task.isSuccessful()){
+                            Log.d(TAG, "signInWithEmail:success");
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
-                            finish();
-                            startActivity(new Intent(getApplicationContext(), HomePage.class));
+                            onLoginSuccess();
                         }else{
                             Toast.makeText(LoginActivity.this, "Login Unsuccessful, Please try again", Toast.LENGTH_SHORT).show();
+                            onLoginFailed();
                         }
 
                     }
@@ -118,9 +119,10 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
 
-                // TODO: Implement successful signup logic here
+                // TODO: Implement successful login logic here
                 // By default we just finish the Activity and log them in automatically
                 this.finish();
+                startActivity(new Intent(getApplicationContext(), HomePage.class));
             }
         }
     }
@@ -134,19 +136,19 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
         finish();
+        startActivity(new Intent(getApplicationContext(), HomePage.class));
     }
 
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         _loginButton.setEnabled(true);
     }
 
     public boolean validate() {
         boolean valid = true;
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        String email = _emailText.getText().toString().trim();
+        String password = _passwordText.getText().toString().trim();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("Enter a valid email address");
