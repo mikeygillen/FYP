@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".EditProfile" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -22,16 +23,20 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".MainActivity" android:screenOrientation="portrait" android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" android:theme="@style/AppTheme.Dark" ></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/AppTheme.Dark" />
         <activity android:name=".HomePage" />
-
     </application>
 
 </manifest>

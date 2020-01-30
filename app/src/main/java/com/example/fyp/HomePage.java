@@ -2,12 +2,18 @@ package com.example.fyp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationRequest;
@@ -19,6 +25,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.internal.NavigationMenuView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
@@ -34,7 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
+import butterknife.BindView;
+
+public class HomePage extends AppCompatActivity implements Routes.OnFragmentInteractionListener, Leaderboard.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
     private static final String TAG = "HomePageActivity";
     private GoogleMap mMap;
 
@@ -46,6 +56,13 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        //loading the default fragment
+        //loadFragment(new Routes());
+
+        //getting bottom navigation view and attaching the listener
+        BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
+        navigation.setOnNavigationItemSelectedListener(this);
 
         firebaseAuth = FirebaseAuth.getInstance();
         if(firebaseAuth.getCurrentUser() == null){
@@ -60,6 +77,47 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+    }
+
+    private boolean loadFragment(Fragment fragment) {
+        //switching fragment
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment = null;
+
+        switch (item.getItemId()) {
+            /*case R.id.navigation_home:
+                fragment = new HomePage();
+                break;
+
+            case R.id.navigation_stats:
+                fragment = new StatsFragment();
+                break;*/
+
+            case R.id.navigation_edit:
+                fragment = new EditProfile();
+                break;
+
+            case R.id.navigation_routes:
+                fragment = new Routes();
+                break;
+
+            case R.id.navigation_leaderboard:
+                fragment = new Leaderboard();
+                break;
+        }
+
+        return loadFragment(fragment);
     }
 
 
@@ -170,5 +228,10 @@ public class HomePage extends AppCompatActivity implements OnMapReadyCallback{
         LatLng currentLocation = new LatLng(53.338743, -6.267030);
         mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
         mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(currentLocation, 13.0f ));
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

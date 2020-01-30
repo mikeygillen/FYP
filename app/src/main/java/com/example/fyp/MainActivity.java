@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-    private void signup(){
+    private void signup() {
         Log.d(TAG, "Signup");
 
         if (!validate()) {
@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity{
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
-        progressDialog.setMessage("Registering new User...");
-        progressDialog.show();
+        //progressDialog.setMessage("Registering new User...");
+        //progressDialog.show();
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -95,36 +95,25 @@ public class MainActivity extends AppCompatActivity{
                 if (task.isSuccessful()) {
                     Log.d(TAG, "createUserWithEmail:success");
                     Toast.makeText(MainActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                    finish();
-                    startActivity(new Intent(getApplicationContext(), HomePage.class));
+                    onSignupSuccess();
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());
                     Toast.makeText(MainActivity.this, "Registration Unsuccessful, Please try again" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    onSignupFailed();
                 }
             }
         });
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
     }
 
     public void onSignupSuccess() {
         _signupButton.setEnabled(true);
-        setResult(RESULT_OK, null);
+        //setResult(RESULT_OK, null);
         finish();
+        startActivity(new Intent(getApplicationContext(), HomePage.class));
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
+        //Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
         _signupButton.setEnabled(true);
     }
 
@@ -135,22 +124,22 @@ public class MainActivity extends AppCompatActivity{
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 3) {
-            _nameText.setError("at least 3 characters");
+        if (name.isEmpty()) {
+            _nameText.setError("Enter a name");
             valid = false;
         } else {
             _nameText.setError(null);
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
+            _emailText.setError("Enter valid email address");
             valid = false;
         } else {
             _emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 6 || password.length() > 10) {
+            _passwordText.setError("Between 6 and 10 alphanumeric characters");
             valid = false;
         } else {
             _passwordText.setError(null);

@@ -24,24 +24,26 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Medium">
+            app:hintTextAppearance="@android:style/TextAppearance.Small">
             <EditText android:id="@+id/input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_email"
                 android:inputType="textEmailAddress"
-                android:hint="Email" />
+                android:hint=" Email" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password Label -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Medium">
+            app:hintTextAppearance="@android:style/TextAppearance.Small">
             <EditText android:id="@+id/input_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_lock"
                 android:inputType="textPassword"
-                android:hint="Password"/>
+                android:hint=" Password"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
