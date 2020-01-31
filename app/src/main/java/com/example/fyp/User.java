@@ -1,5 +1,7 @@
+package com.example.fyp;
+
 public class User {
-    protected String name, height, weight, email, dob;
+    protected String name, height, weight, email, dob, gender;
 
     public User(){
     }
@@ -9,12 +11,12 @@ public class User {
         this.email = email;
     }
 
-    public User(String name, String height, String weight, String email, String dob) {
-        this.name = name;
+    public User(String height, String weight, String email, String dob, String gender) {
         this.height = height;
         this.weight = weight;
         this.email = email;
         this.dob = dob;
+        this.gender = gender;
     }
 
     public String getName() {
@@ -52,8 +54,16 @@ public class User {
     public String getDob() {
         return dob;
     }
-
     public void setDob(String dob) {
         this.dob = dob;
     }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 }
+

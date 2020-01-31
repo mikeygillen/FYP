@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity{
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
-        //progressDialog.setMessage("Registering new User...");
+        //progressDialog.setMessage("Registering new Account...");
         //progressDialog.show();
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

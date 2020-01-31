@@ -67,6 +67,8 @@
                         android:id="@+id/text_dob"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:hint="dd/mm/yyyy"/>
                         android:onClick="showDatePickerDialog" />
 
                     <TextView

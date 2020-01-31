@@ -42,8 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import butterknife.BindView;
-
 public class HomePage extends AppCompatActivity implements Routes.OnFragmentInteractionListener, Leaderboard.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
     private static final String TAG = "HomePageActivity";
     private GoogleMap mMap;
@@ -56,11 +54,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-
-        //loading the default fragment
-        //loadFragment(new Routes());
-
-        //getting bottom navigation view and attaching the listener
+        
         BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
@@ -96,11 +90,11 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         Fragment fragment = null;
 
         switch (item.getItemId()) {
-            /*case R.id.navigation_home:
-                fragment = new HomePage();
+            case R.id.navigation_home:
+                fragment = new Fragment();
                 break;
 
-            case R.id.navigation_stats:
+            /*case R.id.navigation_stats:
                 fragment = new StatsFragment();
                 break;*/
 
