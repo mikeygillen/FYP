@@ -46,6 +46,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
     private static final String TAG = "HomePageActivity";
     private GoogleMap mMap;
 
+    private Button startRun;
     private LocationRequest mLocationRequest;
     ArrayList<LatLng> locations = new ArrayList();
     private FirebaseAuth firebaseAuth;
@@ -54,7 +55,8 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        
+
+        startRun = (Button) findViewById(R.id.btn_start_run);
         BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
@@ -71,6 +73,18 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+        startRun.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRun();
+            }
+        });
+
+    }
+
+    public void startRun(){
+        this.finish();
+        startActivity(new Intent(getApplicationContext(), RunTracker.class));
     }
 
     private boolean loadFragment(Fragment fragment) {

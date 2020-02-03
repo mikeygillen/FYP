@@ -1,144 +1,130 @@
 package com.example.fyp;
 
-import java.util.List;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.LocationSource.OnLocationChangedListener;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
-
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.os.Build;
 import android.os.Bundle;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.support.v4.app.FragmentActivity;
-import android.view.Menu;
-import android.widget.Toast;
+import android.os.Looper;
 
-public class RunTracker extends Activity implements GooglePlayServicesClient.ConnectionCallbacks, OnConnectionFailedListener, LocationListener{
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
-    private OnLocationChangedListener mListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+public class RunTracker extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
-    private GoogleApiClient mLocationClient;
-    private Location mCurrentLocation;
-    private LocationRequest mLocationRequest;
-    List<LatLng>routePoints;
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    @SuppressLint("NewApi")
+    private LocationRequest mLocationRequest;
+    private FusedLocationProviderClient fusedLocationClient;
+    private Location mCurrentLocation;
+    private boolean requestingLocationUpdates;
+    private LocationCallback locationCallback;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                        }
+                    }
+                });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.trackerMap);
         mapFragment.getMapAsync(this);
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
+        /*boolean permissionAccessCoarseLocationApproved =
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
 
-        mMap =((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
-        mMap.setMyLocationEnabled(true);
-        mLocationClient = new LocationClient(this,this, this);
-        mLocationRequest = LocationRequest.create();
+        if (permissionAccessCoarseLocationApproved) {
+            boolean backgroundLocationPermissionApproved =
+                    ActivityCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED;
+
+            if (backgroundLocationPermissionApproved) {
+                // App can access location both in the foreground and in the background.
+                // Start your service that doesn't have a foreground service type
+                // defined.
+            } else {
+                // App can only access location in the foreground. Display a dialog
+                // warning the user that your app must have all-the-time access to
+                // location in order to function properly. Then, request background
+                // location.
+                ActivityCompat.requestPermissions(this, new String[] {
+                                Manifest.permission.ACCESS_BACKGROUND_LOCATION},
+                        your-permission-request-code);
+            }
+        } else {
+            // App doesn't have access to the device's location at all. Make full request
+            // for permission.
+            ActivityCompat.requestPermissions(this, new String[] {
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    },
+                    your-permission-request-code);
+        }*/
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Update UI with location data
+                    // ...
+                }
+            };
+        };
 
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }*/
+
 
     @Override
-    public void onConnected(Bundle dataBundle) {
-
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-        Location location = mLocationClient.getLastLocation();
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        routePoints.add(latLng);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17);
-        mMap.animateCamera(cameraUpdate);
-
-    }
-
-    @Override
-    public void onDisconnected() {
-
-        Toast.makeText(this, "Disconnected. Please re-connect.",
-                Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
-    public void onStart(){
-        super.onStart();
-        mLocationClient.connect();
-    }
-
-    public void onStop(){
-        mLocationClient.disconnect();
-        super.onStop();
-    }
-
-    public void activate(OnLocationChangedListener listener){
-        mListener = listener;
-    }
-
-    public void deactivate(){
-        mListener = null;
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        if(mListener != null){
-            mListener.onLocationChanged(location);
+    protected void onResume() {
+        super.onResume();
+        if (requestingLocationUpdates) {
+            startLocationUpdates();
         }
-
-        LatLng mapPoint = new LatLng(location.getLatitude(), location.getLongitude());
-        routePoints.add(mapPoint);
-        Polyline route = mMap.addPolyline(new PolylineOptions());
-        route.setPoints(routePoints);
-
-
     }
-    @Override
-    public void onProviderDisabled(String arg0) {
-        // TODO Auto-generated method stub
-
+    private void startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback,
+                Looper.getMainLooper());
     }
 
     @Override
-    public void onProviderEnabled(String arg0) {
-        // TODO Auto-generated method stub
-
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
     }
 
     @Override
-    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-        // TODO Auto-generated method stub
+    public void onMapReady(GoogleMap googleMap) {
 
     }
 }
