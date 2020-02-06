@@ -30,10 +30,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
-
-import butterknife.BindView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,7 +55,8 @@ public class EditProfile extends Fragment {
 
     View v;
 
-    EditText txtHeight, txtWeight, txtPassword, txtdob;
+    EditText txtHeight, txtWeight, txtPassword;
+    DatePicker datePicker;
     Spinner Gender;
     Button btnupdate;
     private EditProfile.OnFragmentInteractionListener mListener;
@@ -98,6 +98,9 @@ public class EditProfile extends Fragment {
         String userid = mUser.getUid();
         mRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
+        //String userid = mUser.getUid();
+        mRef = FirebaseDatabase.getInstance().getReference("Users");
+
     }
 
     @Nullable
@@ -105,7 +108,6 @@ public class EditProfile extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
-
 
         btnupdate = (Button) v.findViewById(R.id.button_update);
         txtHeight = (EditText) v.findViewById(R.id.text_height);
@@ -118,7 +120,7 @@ public class EditProfile extends Fragment {
         Gender.setAdapter(adapter);
 
         final Calendar myCalendar = Calendar.getInstance();
-        txtdob= (EditText) v.findViewById(R.id.text_dob);
+        datePicker = v.findViewById(R.id.text_dob);
         final DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 
             @Override
@@ -133,7 +135,7 @@ public class EditProfile extends Fragment {
                 String myFormat = "dd/mm/yy"; //In which you need put here
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
 
-                txtdob.setText(sdf.format(myCalendar.getTime()));
+                //dob.setText(sdf.format(myCalendar.getTime()));
             }
         };
 
@@ -142,7 +144,6 @@ public class EditProfile extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 txtHeight.setText(dataSnapshot.child("height").getValue(String.class));
                 txtWeight.setText(dataSnapshot.child("weight").getValue(String.class));
-                txtdob.setText(dataSnapshot.child("dob").getValue(String.class));
             }
 
             @Override
@@ -151,7 +152,7 @@ public class EditProfile extends Fragment {
             }
         });
 
-        txtdob.setOnClickListener(new View.OnClickListener() {
+        datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(getActivity(), date, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
@@ -173,7 +174,8 @@ public class EditProfile extends Fragment {
         final String e = mUser.getEmail();
         final String h = txtHeight.getText().toString().trim();
         final String w = txtWeight.getText().toString().trim();
-        final String d = txtdob.getText().toString();
+        final String d = "" + datePicker.getDayOfMonth() + "-" + (datePicker.getMonth() + 1) + "-" + datePicker.getYear();
+
 
         String g;
         if(Gender != null && Gender.getSelectedItem() !=null ) {

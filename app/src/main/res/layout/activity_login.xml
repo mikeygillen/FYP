@@ -18,33 +18,23 @@
             android:layout_height="96dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_login" />
+            app:srcCompat="@drawable/ic_login" />
 
         <!-- Email Label -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
             <EditText android:id="@+id/input_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_email"
                 android:inputType="textEmailAddress"
                 android:hint=" Email" />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Password Label -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:hintTextAppearance="@android:style/TextAppearance.Small">
             <EditText android:id="@+id/input_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_lock"
                 android:inputType="textPassword"
                 android:hint=" Password"/>
-        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/btn_login"

@@ -63,13 +63,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
 
-                    <EditText
+                    <DatePicker
                         android:id="@+id/text_dob"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:hint="dd/mm/yyyy"/>
-                        android:onClick="showDatePickerDialog" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="75dp"
+                        android:calendarViewShown="false"
+                        android:datePickerMode="spinner" />
 
                     <TextView
                         android:labelFor="@id/text_height"
