@@ -7,13 +7,17 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,6 +68,8 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
     private LocationRequest mLocationRequest;
     private LocationCallback locationCallback;
     private static final int REQUEST_CODE = 101;
+    public double cLat;
+    public double cLong;
 
     private LocationProvider mLocationProvider;
     private boolean isUserWalking;
@@ -88,7 +94,6 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         setContentView(R.layout.activity_home_page);
 
         isUserWalking = false;
-        startTime = 0;
 
         startRun = (Button) findViewById(R.id.btn_start);
         endRun = (Button) findViewById(R.id.btn_stop);
@@ -99,34 +104,23 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         if(firebaseAuth.getCurrentUser() == null){
             startActivity(new Intent(this, LoginActivity.class));
         }
-        FirebaseUser mUser = firebaseAuth.getCurrentUser();
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         String userid = mUser.getUid();
         mRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
         newRoute = FirebaseDatabase.getInstance().getReference("Routes");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    // Logic to handle location object
-                }
-            }
-        });
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        getLastLocation();
 
         startRun.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 startRun.setVisibility(View.INVISIBLE);
                 endRun.setVisibility(View.VISIBLE);
+                startTime = 0;
                 startRunTracking();
             }
         });
@@ -138,41 +132,23 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 endRunTracking();
             }
         });
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
-                    Toast.makeText(HomePage.this, "Location Results", Toast.LENGTH_SHORT).show();
-                }
-            };
-        };
-
-        boolean permissionAccessCoarseLocationApproved = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-        if (permissionAccessCoarseLocationApproved) {
-            boolean backgroundLocationPermissionApproved =
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-            if (backgroundLocationPermissionApproved) {// App can access location both in the foreground and in the background.
-            } else {// App can only access location in the foreground.
-                ActivityCompat.requestPermissions(this, new String[] {
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_CODE);
-            }
-        } else {// App doesn't have access to the device's location at all.
-            ActivityCompat.requestPermissions(this, new String[] {
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_CODE);
-        }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mapheading, menu);
+        return true;
+    }
+
+
     private void startRunTracking() {
+        locations.clear();
+
         Log.d(TAG, "Route Tracking Start");
-        if (null != mCurrentLocation) {
+        //if (mCurrentLocation != null) {
+        if (isLocationEnabled()){
+
                 //Initiate the request to track the device's location//
                 LocationRequest request = new LocationRequest();
                 //Specify how often your app should request the device’s location//
@@ -186,21 +162,23 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
             mPreviousLocation = mCurrentLocation;
             mDistanceCovered = 0;
 
-                final String path = newRoute.toString().substring(Integer.parseInt(newRoute.toString()));
+                //final String path = newRoute.toString().substring(Integer.parseInt(newRoute.toString()));
                 int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
                 //If the app currently has access to the location permission...//
             if (permission == PackageManager.PERMISSION_GRANTED) {
-                //...then request location updates//
+                //request location updates//
                 client.requestLocationUpdates(request, new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
-                        //Get a reference to the database, so your app can perform read and write operations//
-                        newRoute = FirebaseDatabase.getInstance().getReference(path);
+                        //Get a reference to the database//
+                        //newRoute = FirebaseDatabase.getInstance().getReference();
+                        //newRoute.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(route);
                         Location location = locationResult.getLastLocation();
                         if (location != null) {
                             //Save the location data to the database//
-                            //newRoute.setValue(location);
+                            cLat = location.getLatitude();
+                            cLong = location.getLongitude();
                             locations.add(location);
                         }
                     }
@@ -218,14 +196,14 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         final String t = String.valueOf(elapsedTime());
         final String p = Helper.calculatePace(elapsedTime(), distanceCovered());
 
+        Log.d(TAG, "Route Tracking Finished with " + t + " time and " + d + " distance");
+
         Route route = new Route(locations);
 
-        newRoute.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(route).addOnCompleteListener(new OnCompleteListener<Void>() {
+        newRoute.child(FirebaseAuth.getInstance().getCurrentUser().getEmail()).setValue(route).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 newRoute.child("Distance").setValue(d);
-                newRoute.child("Time").setValue(t);
-                newRoute.child("Pace").setValue(p);
             }
         });
     }
@@ -269,10 +247,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
     private boolean loadFragment(Fragment fragment) {
         //switching fragment
         if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
             return true;
         }
         return false;
@@ -312,14 +287,6 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         return loadFragment(fragment);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mapheading, menu);
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -349,9 +316,9 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 marker(R.raw.south);
                 return true;
             case R.id.logout:
-                firebaseAuth.signOut();
                 finish();
-                startActivity(new Intent(this, LoginActivity.class));
+                firebaseAuth.signOut();
+                startActivity(new Intent(this, MainActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -418,9 +385,95 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
-        LatLng currentLocation = new LatLng(53.338743, -6.267030);
+        LatLng currentLocation = new LatLng(53.338444, -6.267202);
+        //atLng currentLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        //LatLng currentLocation = new LatLng(cLat, cLong);
         mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
         mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(currentLocation, 13.0f ));
+    }
+
+    @SuppressLint("MissingPermission")
+    private void getLastLocation(){
+        if (checkPermissions()) {
+            if (isLocationEnabled()) {
+                fusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        Location location = task.getResult();
+                        // Got last known location. In some rare situations this can be null
+                        if (location == null) {
+                            Log.e("TAG", "GPS has failed");
+                            requestNewLocationData();
+                        }else{
+                            Log.e("TAG", "Got last known location");
+                            mCurrentLocation = location;
+                        }
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(intent);
+            }
+        } else {
+            requestPermissions();
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private void requestNewLocationData(){
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+
+    }
+
+    private LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            mPreviousLocation = locationResult.getLastLocation();
+
+            for (Location location : locationResult.getLocations()) {
+                // Update UI with location data
+                Log.e("TAG", "Location result was found");
+                mCurrentLocation = location;
+                locations.add(location);
+                //cLat = location.getLatitude();
+                //cLong = location.getLongitude();
+            }
+            if (locationResult == null) {
+                Log.e("TAG", "Location result = null");
+                return;
+            }
+        }
+    };
+
+    private boolean checkPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        return false;
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[] {
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_CODE);
+    }
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                LocationManager.NETWORK_PROVIDER
+        );
     }
 
     @Override

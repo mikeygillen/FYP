@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,6 +67,7 @@ public class EditProfile extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private DatabaseReference mRef;
+    private FirebaseAuth firebaseAuth;
 
     public EditProfile() {
         // Required empty public constructor
@@ -170,8 +175,9 @@ public class EditProfile extends Fragment {
 
     private void UpdateUser(){
         btnupdate.setEnabled(false);
+        final String email = mUser.getEmail();
+        final String password = txtPassword.getText().toString().trim();
 
-        final String e = mUser.getEmail();
         final String h = txtHeight.getText().toString().trim();
         final String w = txtWeight.getText().toString().trim();
         final String d = "" + datePicker.getDayOfMonth() + "-" + (datePicker.getMonth() + 1) + "-" + datePicker.getYear();
@@ -184,7 +190,26 @@ public class EditProfile extends Fragment {
             g = "Null";
         }
 
-        User user = new User(h, w, e, d, g);
+        User user = new User(h, w, d, g);
+
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task){
+                        //progressDialog.dismiss();
+                        if(task.isSuccessful()) {
+                            Log.d(TAG, "Update details with password:success");
+                            mCurrentUser[0] = task.getResult().getUser();
+                            newUser[0] = mDatabase.child(mCurrentUser[0].getUid());
+                            newUser[0].child("Name").setValue(name);
+
+                        } else {
+                            Log.w(TAG, "Update details with password:failure", task.getException());
+                            Toast.makeText(getActivity(), "Incorrect password, Please try again" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            onSignupFailed();
+                        }
+                    }
+                });
 
             mRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override

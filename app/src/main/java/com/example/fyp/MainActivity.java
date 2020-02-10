@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity{
 
         final String name = _nameText.getText().toString();
         final String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        final String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
         progressDialog.setMessage("Registering new Account...");
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity{
                     Toast.makeText(MainActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
 
                     mCurrentUser[0] = task.getResult().getUser();
-                    newUser[0] =mDatabase.child(mCurrentUser[0].getUid());
+                    newUser[0] = mDatabase.child(mCurrentUser[0].getUid());
                     newUser[0].child("Name").setValue(name);
 
                     onSignupSuccess();

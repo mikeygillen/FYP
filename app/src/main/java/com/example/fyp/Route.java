@@ -2,9 +2,12 @@ package com.example.fyp;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 public class Route {
+    protected LatLng startPos, endPos;
     protected String distance, time, pace;
     protected ArrayList<Location> locations = new ArrayList<>();
 
@@ -16,17 +19,34 @@ public class Route {
         this.locations = locations;
     }
 
-    public Route(String distance, String time, String pace) {
+    public Route(String distance, ArrayList<Location> locations) {
         this.distance = distance;
-        this.time = time;
-        this.pace = pace;
+        this.locations = locations;
     }
 
-    public Route(String distance, String time, String pace, ArrayList<Location> locations) {
+    public Route(LatLng startPos, LatLng endPos, String distance, String time, String pace, ArrayList<Location> locations) {
+        this.startPos = startPos;
+        this.endPos = endPos;
         this.distance = distance;
         this.time = time;
         this.pace = pace;
         this.locations = locations;
+    }
+
+    public LatLng getStartPos() {
+        return startPos;
+    }
+
+    public void setStartPos(LatLng startPos) {
+        this.startPos = startPos;
+    }
+
+    public LatLng getEndPos() {
+        return endPos;
+    }
+
+    public void setEndPos(LatLng endPos) {
+        this.endPos = endPos;
     }
 
     public String getDistance() {
