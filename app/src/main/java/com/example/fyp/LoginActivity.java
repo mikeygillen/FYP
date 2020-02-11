@@ -42,10 +42,10 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if(firebaseAuth.getCurrentUser() !=null){
+        /*if(firebaseAuth.getCurrentUser() !=null){
             finish();
             startActivity(new Intent(getApplicationContext(), HomePage.class));
-        }
+        }*/
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
             @Override

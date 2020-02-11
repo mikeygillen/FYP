@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity{
         final DatabaseReference mDatabase;
         final DatabaseReference[] newUser = new DatabaseReference[1];
         final FirebaseUser[] mCurrentUser = new FirebaseUser[1];
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override

@@ -87,6 +87,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
 
     ArrayList<LatLng> latLngs = new ArrayList();
     ArrayList<Location> locations = new ArrayList<>();
+    private LocationCallback mLocationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +201,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
 
         Route route = new Route(locations);
 
-        newRoute.child(FirebaseAuth.getInstance().getCurrentUser().getEmail()).setValue(route).addOnCompleteListener(new OnCompleteListener<Void>() {
+        newRoute.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(route).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 newRoute.child("Distance").setValue(d);
@@ -261,6 +262,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
             case R.id.navigation_home:
                 startRun.setVisibility(View.VISIBLE);
                 fragment = new Fragment();
+                this.getSupportActionBar().show();
                 break;
 
             /*case R.id.navigation_stats:
@@ -316,9 +318,9 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 marker(R.raw.south);
                 return true;
             case R.id.logout:
-                finish();
                 firebaseAuth.signOut();
                 startActivity(new Intent(this, MainActivity.class));
+                finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -386,7 +388,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         mMap.getUiSettings().setZoomControlsEnabled(true);
 
         LatLng currentLocation = new LatLng(53.338444, -6.267202);
-        //atLng currentLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+        //LatLng currentLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
         //LatLng currentLocation = new LatLng(cLat, cLong);
         mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
         mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(currentLocation, 13.0f ));
@@ -431,9 +433,28 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
 
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                mPreviousLocation = locationResult.getLastLocation();
+
+                for (Location location : locationResult.getLocations()) {
+                    // Update UI with location data
+                    Log.e("TAG", "Location result was found");
+                    mCurrentLocation = location;
+                    locations.add(location);
+                    //cLat = location.getLatitude();
+                    //cLong = location.getLongitude();
+                }
+                if (locationResult == null) {
+                    Log.e("TAG", "Location result = null");
+                    return;
+                }
+            }
+        };
     }
 
-    private LocationCallback mLocationCallback = new LocationCallback() {
+    /*private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             mPreviousLocation = locationResult.getLastLocation();
@@ -451,7 +472,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 return;
             }
         }
-    };
+    };*/
 
     private boolean checkPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&

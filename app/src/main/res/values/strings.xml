@@ -8,6 +8,13 @@
         <item>Undecided</item>
     </string-array>
 
+    <string-array name="filter_array">
+        <item>Furthest Distance</item>
+        <item>Shortest Distance</item>
+        <item>Fastest</item>
+        <item>Slowest</item>
+    </string-array>
+
     <string name="title_home">Home</string>
     <string name="title_profile">Profile</string>
     <string name="title_leaderboard">Leaderboard</string>

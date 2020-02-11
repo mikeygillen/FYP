@@ -2,6 +2,7 @@ package com.example.fyp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.app.DatePickerDialog;
@@ -20,9 +21,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +30,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -64,10 +61,8 @@ public class EditProfile extends Fragment {
     Spinner Gender;
     Button btnupdate;
     private EditProfile.OnFragmentInteractionListener mListener;
-    private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private DatabaseReference mRef;
-    private FirebaseAuth firebaseAuth;
 
     public EditProfile() {
         // Required empty public constructor
@@ -98,13 +93,14 @@ public class EditProfile extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        mAuth = FirebaseAuth.getInstance();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         String userid = mUser.getUid();
         mRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
         //String userid = mUser.getUid();
-        mRef = FirebaseDatabase.getInstance().getReference("Users");
+        //mRef = FirebaseDatabase.getInstance().getReference("Users");
 
     }
 
@@ -173,52 +169,33 @@ public class EditProfile extends Fragment {
         return v;
     }
 
-    private void UpdateUser(){
+    private void UpdateUser() {
         btnupdate.setEnabled(false);
-        final String email = mUser.getEmail();
-        final String password = txtPassword.getText().toString().trim();
 
         final String h = txtHeight.getText().toString().trim();
         final String w = txtWeight.getText().toString().trim();
         final String d = "" + datePicker.getDayOfMonth() + "-" + (datePicker.getMonth() + 1) + "-" + datePicker.getYear();
 
 
-        String g;
-        if(Gender != null && Gender.getSelectedItem() !=null ) {
-            g = (String)Gender.getSelectedItem();
-        } else  {
+        final String g;
+        if (Gender != null && Gender.getSelectedItem() != null) {
+            g = (String) Gender.getSelectedItem();
+        } else {
             g = "Null";
         }
 
-        User user = new User(h, w, d, g);
+        if (validate()) {
+            Log.d(TAG, "Update details with password:success");
+            btnupdate.setEnabled(true);
 
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task){
-                        //progressDialog.dismiss();
-                        if(task.isSuccessful()) {
-                            Log.d(TAG, "Update details with password:success");
-                            mCurrentUser[0] = task.getResult().getUser();
-                            newUser[0] = mDatabase.child(mCurrentUser[0].getUid());
-                            newUser[0].child("Name").setValue(name);
-
-                        } else {
-                            Log.w(TAG, "Update details with password:failure", task.getException());
-                            Toast.makeText(getActivity(), "Incorrect password, Please try again" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            onSignupFailed();
-                        }
-                    }
-                });
-
-            mRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(getActivity(),"User Details updated",Toast.LENGTH_SHORT).show();
-                    btnupdate.setEnabled(true);
-                    onDetach();
-                }
-            });
+            mRef.child("Height").setValue(h);
+            mRef.child("Weight").setValue(w);
+            mRef.child("Birth Date").setValue(d);
+            mRef.child("Gender").setValue(g);
+        } else {
+            Log.w(TAG, "Update details with password:failure");
+            onUpdateFailed();
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -228,14 +205,18 @@ public class EditProfile extends Fragment {
         }
     }
 
+    public void onUpdateFailed() {
+        Toast.makeText(getActivity(), "Update failed", Toast.LENGTH_LONG).show();
+        btnupdate.setEnabled(true);
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof EditProfile.OnFragmentInteractionListener) {
             mListener = (EditProfile.OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -258,5 +239,26 @@ public class EditProfile extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    public boolean validate() {
+        boolean valid = true;
+
+        final String h = txtHeight.getText().toString().trim();
+        final String w = txtWeight.getText().toString().trim();
+
+        if (h.isEmpty()) {
+            txtHeight.setError("Enter Height");
+            valid = false;
+        } else {
+            txtHeight.setError(null);
+        }
+
+        if (w.isEmpty()) {
+            txtWeight.setError("Enter Weight");
+            valid = false;
+        } else {
+            txtWeight.setError(null);
+        }
+        return valid;
     }
 }
