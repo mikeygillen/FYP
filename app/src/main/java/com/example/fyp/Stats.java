@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -15,17 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Leaderboard.OnFragmentInteractionListener} interface
+ * {@link Stats.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Leaderboard#newInstance} factory method to
+ * Use the {@link Stats#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Leaderboard extends Fragment {
+public class Stats extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -42,7 +40,7 @@ public class Leaderboard extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public Leaderboard() {
+    public Stats() {
         // Required empty public constructor
     }
 
@@ -52,11 +50,11 @@ public class Leaderboard extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment Leaderboard.
+     * @return A new instance of fragment Stats.
      */
     // TODO: Rename and change types and number of parameters
-    public static Leaderboard newInstance(String param1, String param2) {
-        Leaderboard fragment = new Leaderboard();
+    public static Stats newInstance(String param1, String param2) {
+        Stats fragment = new Stats();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -74,19 +72,16 @@ public class Leaderboard extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
 
 
-        // TODO: Add recycler view here
-
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_leaderboard, container, false);
+        v = inflater.inflate(R.layout.fragment_stats, container, false);
 
         btnFilter = (Button) v.findViewById(R.id.btn_update);
         filter = (Spinner) v.findViewById(R.id.text_filter);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.filter_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.personal_filer, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filter.setAdapter(adapter);
 

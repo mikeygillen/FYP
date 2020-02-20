@@ -8,7 +8,15 @@
         <item>Undecided</item>
     </string-array>
 
-    <string-array name="filter_array">
+    <string-array name="leaderboard_filter">
+        <item>Furthest Distance</item>
+        <item>Shortest Distance</item>
+        <item>Fastest</item>
+        <item>Slowest</item>
+    </string-array>
+
+    <string-array name="personal_filer">
+        <item>General</item>
         <item>Furthest Distance</item>
         <item>Shortest Distance</item>
         <item>Fastest</item>
@@ -17,7 +25,7 @@
 
     <string name="title_home">Home</string>
     <string name="title_profile">Profile</string>
-    <string name="title_leaderboard">Leaderboard</string>
+    <string name="title_friend_finder">Finder</string>
     <string name="title_stats">Stats</string>
     <string name="title_routes">Routes</string>
 

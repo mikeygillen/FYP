@@ -1,6 +1,7 @@
 package com.example.fyp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -13,7 +14,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -26,8 +26,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
@@ -35,7 +38,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -60,62 +65,58 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class HomePage extends AppCompatActivity implements Routes.OnFragmentInteractionListener, Leaderboard.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback{
+public class HomePage extends AppCompatActivity implements Stats.OnFragmentInteractionListener, Routes.OnFragmentInteractionListener, PairUsers.OnFragmentInteractionListener, EditProfile.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback, LocationListener {
     private static final String TAG = "HomePageActivity";
 
     private GoogleMap mMap;
+    private Location mPreviousLocation;
+    private Location mCurrentLocation;
+    private LocationCallback mLocationCallback;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest mLocationRequest;
-    private LocationCallback locationCallback;
-    private static final int REQUEST_CODE = 101;
-    public double cLat;
-    public double cLong;
+    private GoogleApiClient googleApiClient;
+    private Marker mCurrentMarker;
 
-    private LocationProvider mLocationProvider;
-    private boolean isUserWalking;
-    private Location mCurrentLocation;
-    private Location mPreviousLocation;
-    private boolean isBroadcastAllow;
+    private static final int REQUEST_CODE = 101;
     private float mDistanceCovered;
     private long startTime;
 
-    private boolean requestingLocationUpdates;
-
     private Button startRun, endRun;
     private FirebaseAuth firebaseAuth;
-    private DatabaseReference mRef, newRoute;
+    private FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+    private DatabaseReference newRoute = FirebaseDatabase.getInstance().getReference("Routes");
+    //private String userid = mUser.getUid();
+    //private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
     ArrayList<LatLng> latLngs = new ArrayList();
     ArrayList<Location> locations = new ArrayList<>();
-    private LocationCallback mLocationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        isUserWalking = false;
+        firebaseAuth = FirebaseAuth.getInstance();
+        if(firebaseAuth.getCurrentUser() == null){
+            finish();
+            startActivity(new Intent(this, LoginActivity.class));
+        }
 
         startRun = (Button) findViewById(R.id.btn_start);
         endRun = (Button) findViewById(R.id.btn_stop);
         BottomNavigationView navigation = findViewById(R.id.bottom_navigation);
         navigation.setOnNavigationItemSelectedListener(this);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-        if(firebaseAuth.getCurrentUser() == null){
-            startActivity(new Intent(this, LoginActivity.class));
-        }
-
-        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-        String userid = mUser.getUid();
-        mRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
-        newRoute = FirebaseDatabase.getInstance().getReference("Routes");
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        getLastLocation();
 
         startRun.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
@@ -144,43 +145,34 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
 
 
     private void startRunTracking() {
-        locations.clear();
-
         Log.d(TAG, "Route Tracking Start");
-        //if (mCurrentLocation != null) {
+        locations.clear();
+        latLngs.clear();
+
         if (isLocationEnabled()){
+            LocationRequest request = new LocationRequest();
+            request.setInterval(5000);
+            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
 
-                //Initiate the request to track the device's location//
-                LocationRequest request = new LocationRequest();
-                //Specify how often your app should request the device’s location//
-                request.setInterval(5000);
-                //Get the most accurate location data available//
-                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
-
-            // TODO:
             startTime = System.currentTimeMillis();
             mPreviousLocation = mCurrentLocation;
             mDistanceCovered = 0;
 
-                //final String path = newRoute.toString().substring(Integer.parseInt(newRoute.toString()));
-                int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+            int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
-                //If the app currently has access to the location permission...//
+            //If the app currently has access to the location permission...//
             if (permission == PackageManager.PERMISSION_GRANTED) {
                 //request location updates//
                 client.requestLocationUpdates(request, new LocationCallback() {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
                         //Get a reference to the database//
-                        //newRoute = FirebaseDatabase.getInstance().getReference();
-                        //newRoute.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(route);
                         Location location = locationResult.getLastLocation();
                         if (location != null) {
                             //Save the location data to the database//
-                            cLat = location.getLatitude();
-                            cLong = location.getLongitude();
                             locations.add(location);
+                            latLngs.add(new LatLng(location.getLatitude(), location.getLongitude()));
                         }
                     }
                 }, null);
@@ -209,7 +201,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         });
     }
 
-    // Assume this algorithm calculates precise distance
+    // Assume this calculates precise distance
     private void calculateDistance(){
             float distanceDiff = mPreviousLocation.distanceTo(mCurrentLocation); // Return meter unit
             mDistanceCovered = mDistanceCovered + distanceDiff;
@@ -224,29 +216,7 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         return mDistanceCovered;
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (requestingLocationUpdates) {
-            startLocationUpdates();
-        }
-    }
-    private void startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.getMainLooper());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        stopLocationUpdates();
-    }
-    private void stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback);
-    }
-
     private boolean loadFragment(Fragment fragment) {
-        //switching fragment
         if (fragment != null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
             return true;
@@ -265,10 +235,10 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 this.getSupportActionBar().show();
                 break;
 
-            /*case R.id.navigation_stats:
+            case R.id.navigation_stats:
                 startRun.setVisibility(View.INVISIBLE); endRun.setVisibility(View.INVISIBLE);
-                fragment = new StatsFragment();
-                break;*/
+                fragment = new Stats();
+                break;
 
             case R.id.navigation_edit:
                 startRun.setVisibility(View.INVISIBLE); endRun.setVisibility(View.INVISIBLE);
@@ -280,9 +250,9 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 fragment = new Routes();
                 break;
 
-            case R.id.navigation_leaderboard:
+            case R.id.navigation_finder:
                 startRun.setVisibility(View.INVISIBLE); endRun.setVisibility(View.INVISIBLE);
-                fragment = new Leaderboard();
+                fragment = new PairUsers();
                 break;
         }
 
@@ -381,44 +351,25 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         return list;
     }
 
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-
-        LatLng currentLocation = new LatLng(53.338444, -6.267202);
-        //LatLng currentLocation = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-        //LatLng currentLocation = new LatLng(cLat, cLong);
-        mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location"));
-        mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(currentLocation, 13.0f ));
-    }
-
     @SuppressLint("MissingPermission")
     private void getLastLocation(){
-        if (checkPermissions()) {
-            if (isLocationEnabled()) {
-                fusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        Location location = task.getResult();
-                        // Got last known location. In some rare situations this can be null
-                        if (location == null) {
+        if (isLocationEnabled()) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null){
+                        Log.e("TAG", "Got last known location");
+                        mPreviousLocation = location;
+                        }else{
                             Log.e("TAG", "GPS has failed");
                             requestNewLocationData();
-                        }else{
-                            Log.e("TAG", "Got last known location");
-                            mCurrentLocation = location;
                         }
                     }
                 });
-            } else {
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(intent);
-            }
         } else {
-            requestPermissions();
+            Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
         }
     }
 
@@ -439,12 +390,8 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 mPreviousLocation = locationResult.getLastLocation();
 
                 for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
                     Log.e("TAG", "Location result was found");
                     mCurrentLocation = location;
-                    locations.add(location);
-                    //cLat = location.getLatitude();
-                    //cLong = location.getLongitude();
                 }
                 if (locationResult == null) {
                     Log.e("TAG", "Location result = null");
@@ -454,25 +401,83 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
         };
     }
 
-    /*private LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            mPreviousLocation = locationResult.getLastLocation();
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
 
-            for (Location location : locationResult.getLocations()) {
-                // Update UI with location data
-                Log.e("TAG", "Location result was found");
-                mCurrentLocation = location;
-                locations.add(location);
-                //cLat = location.getLatitude();
-                //cLong = location.getLongitude();
-            }
-            if (locationResult == null) {
-                Log.e("TAG", "Location result = null");
-                return;
-            }
+        if (checkPermissions()){
+            getLastLocation();
+            mMap.setMyLocationEnabled(true);
+        }else{
+            requestPermissions();
+            mMap.setMyLocationEnabled(true);
         }
-    };*/
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        mPreviousLocation = location;
+        if (mCurrentMarker != null) {
+            mCurrentMarker.remove();
+        }
+        //Place current location marker
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        mCurrentMarker = mMap.addMarker(markerOptions);
+
+        //move map camera
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
+        //stop location updates
+        if (fusedLocationClient != null) {
+            fusedLocationClient.removeLocationUpdates(mLocationCallback);
+        }
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop(){
+        if(googleApiClient.isConnected()){
+            googleApiClient.disconnect();
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult){
+        Log.e("HomePage", "Connection failed: " + connectionResult.getErrorCode());
+    }
+
+    @Override
+    public void onConnectionSuspended(int i){
+        Log.e("HomePage", "Connection suspended");
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle){
+        if(!checkPermissions()){
+            requestPermissions();
+        }else{
+            getLastLocation();
+        }
+    }
+
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+                LocationManager.NETWORK_PROVIDER
+        );
+    }
 
     private boolean checkPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
@@ -488,13 +493,6 @@ public class HomePage extends AppCompatActivity implements Routes.OnFragmentInte
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION}, REQUEST_CODE);
-    }
-
-    private boolean isLocationEnabled() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-                LocationManager.NETWORK_PROVIDER
-        );
     }
 
     @Override

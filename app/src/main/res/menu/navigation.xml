@@ -7,9 +7,9 @@
         android:title="Stats"/>
 
     <item
-        android:id="@+id/navigation_leaderboard"
+        android:id="@+id/navigation_finder"
         android:icon="@drawable/ic_leaderboard"
-        android:title="Leaderboard"/>
+        android:title="Finder"/>
 
     <item
         android:id="@+id/navigation_home"
