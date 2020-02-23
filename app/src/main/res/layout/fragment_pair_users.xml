@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <RelativeLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,13 +26,26 @@
                 android:textSize="26sp"
                 android:textStyle="bold"/>
 
+            <TextView
+                android:id="@+id/pairUser_subTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/pairUser_title"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:gravity="center_horizontal"
+                android:text="Please fill out the below form with the ideal characteristics of you preferred running partner and click 'Search' when you are happy"
+                android:textColor="#fff"
+                android:textSize="10sp"/>
+
+
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/pairUser_title"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:layout_marginTop="70dp"
+                android:layout_marginTop="50dp"
                 android:background="#fff"
                 android:elevation="4dp"
                 android:orientation="vertical"
@@ -46,29 +58,76 @@
                     android:paddingTop="20dp">
 
                     <TextView
-                        android:labelFor="@id/text_filter"
-                        android:text="Filter"
+                        android:labelFor="@id/SeekBarDistance"
+                        android:text="Distance Run"
                         android:fontFamily="sans-serif-light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
-                    <Spinner
-                        android:id="@+id/text_filter"
+                    <SeekBar
+                        android:id="@+id/SeekBarDistance"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
-
-                    <View
+                        android:layout_height="wrap_content"
+                        android:max="200"
+                        android:progress="100"/>
+                    <TextView
+                        android:id="@+id/DistanceSet"
                         android:layout_width="match_parent"
-                        android:layout_height="5dp"
-                        android:background="@android:color/darker_gray"/>
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/SeekBarDistance"/>
 
+                    <TextView
+                        android:labelFor="@id/SeekBarPace"
+                        android:text="Pace of Run"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <SeekBar
+                        android:id="@+id/SeekBarPace"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:max="200"
+                        android:progress="100"/>
+                    <TextView
+                        android:id="@+id/PaceSet"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/SeekBarPace"/>
+
+                    <TextView
+                        android:text="Preferred time of Runs"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <RadioGroup
+                        android:id="@+id/TimePreferred"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/radio_morning"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Morning"
+                            android:onClick="onRadioButtonClicked"/>
+                        <RadioButton android:id="@+id/radio_midday"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Midday"
+                            android:onClick="onRadioButtonClicked"/>
+                        <RadioButton android:id="@+id/radio_afternoon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Afternoon"
+                            android:onClick="onRadioButtonClicked"/>
+                    </RadioGroup>
+
+                    <!--
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent" /> -->
 
                     <Button
                         android:id="@+id/btn_search_user"
@@ -77,12 +136,14 @@
                         android:layout_margin="15dp"
                         android:background="#d67601"
                         android:text="Search"
+                        android:drawableTop="@drawable/ic_search"
                         android:textColor="#fff"
                         android:textSize="14sp"/>
                 </LinearLayout>
 
             </RelativeLayout>
 
+            <!--
             <ImageButton
                 android:id="@+id/user_profile_photo"
                 android:layout_width="125dp"
@@ -91,7 +152,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/user_profile_background"
-                android:elevation="4dp"></ImageButton>
+                android:elevation="4dp"></ImageButton> -->
 
         </RelativeLayout>
 

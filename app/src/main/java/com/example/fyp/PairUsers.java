@@ -8,12 +8,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +30,7 @@ import android.widget.Spinner;
  * create an instance of this fragment.
  */
 public class PairUsers extends Fragment {
+    private static final String TAG = "PairUserActivity";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,8 +42,11 @@ public class PairUsers extends Fragment {
 
     View v;
 
-    Spinner filter;
-    Button btnFilter;
+    private TextView d, p;
+    private Button btnSearch;
+    private SeekBar sDistance, sPace;
+    private RadioGroup rg;
+    private RadioButton sTime;
 
     private OnFragmentInteractionListener mListener;
 
@@ -82,16 +92,41 @@ public class PairUsers extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_pair_users, container, false);
 
-        btnFilter = (Button) v.findViewById(R.id.btn_update);
-        filter = (Spinner) v.findViewById(R.id.text_filter);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.leaderboard_filter, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        filter.setAdapter(adapter);
+        btnSearch = (Button) v.findViewById(R.id.btn_search_user);
+        sDistance = (SeekBar) v.findViewById(R.id.SeekBarDistance);
+        sPace = (SeekBar) v.findViewById(R.id.SeekBarPace);
+        rg = (RadioGroup) v.findViewById(R.id.TimePreferred);
+
+        d.setText("Change in Distance = " + sDistance.getProgress() + "%");
+        p.setText("Change in Pace = " + sPace.getProgress() + "%");
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchUser();
+            }
+        });
 
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    private void SearchUser() {
+        btnSearch.setEnabled(false);
+
+        int seekDistanceValue = sDistance.getProgress();
+        int seekPaceValue = sPace.getProgress();
+
+        // get selected radio button from radioGroup
+        int selectedId = rg.getCheckedRadioButtonId();
+        // find the radiobutton by returned id
+        sTime = (RadioButton) v.findViewById(selectedId);
+
+
+        Log.d(TAG, "Distance: " + seekDistanceValue + " - Pace: " + seekPaceValue + " - Time: " + sTime.getText());
+
+    }
+
+        // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
