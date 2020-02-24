@@ -29,7 +29,7 @@ import android.widget.Toast;
  * Use the {@link PairUsers#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PairUsers extends Fragment {
+public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListener {
     private static final String TAG = "PairUserActivity";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -46,7 +46,7 @@ public class PairUsers extends Fragment {
     private Button btnSearch;
     private SeekBar sDistance, sPace;
     private RadioGroup rg;
-    private RadioButton sTime;
+    private RadioButton rb;
 
     private OnFragmentInteractionListener mListener;
 
@@ -93,12 +93,52 @@ public class PairUsers extends Fragment {
         v = inflater.inflate(R.layout.fragment_pair_users, container, false);
 
         btnSearch = (Button) v.findViewById(R.id.btn_search_user);
-        sDistance = (SeekBar) v.findViewById(R.id.SeekBarDistance);
-        sPace = (SeekBar) v.findViewById(R.id.SeekBarPace);
-        rg = (RadioGroup) v.findViewById(R.id.TimePreferred);
 
-        d.setText("Change in Distance = " + sDistance.getProgress() + "%");
-        p.setText("Change in Pace = " + sPace.getProgress() + "%");
+        sDistance = (SeekBar) v.findViewById(R.id.SeekBarDistance);
+        sDistance.setOnSeekBarChangeListener(this);
+        sDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                d = (TextView) v.findViewById(R.id.DistanceSet);
+                d.setText("Change in Distance = " + sDistance.getProgress() + "%");
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        sPace = (SeekBar) v.findViewById(R.id.SeekBarPace);
+        sPace.setOnSeekBarChangeListener(this);
+        sPace.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                p = (TextView) v.findViewById(R.id.PaceSet);
+                p.setText("Change in Pace = " + sPace.getProgress() + "%");
+
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+        rg = (RadioGroup) v.findViewById(R.id.TimePreferred);
+        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                rb = (RadioButton) v.findViewById(checkedId);
+            }
+        });
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,10 +159,10 @@ public class PairUsers extends Fragment {
         // get selected radio button from radioGroup
         int selectedId = rg.getCheckedRadioButtonId();
         // find the radiobutton by returned id
-        sTime = (RadioButton) v.findViewById(selectedId);
+        rb = (RadioButton) v.findViewById(selectedId);
 
 
-        Log.d(TAG, "Distance: " + seekDistanceValue + " - Pace: " + seekPaceValue + " - Time: " + sTime.getText());
+        Log.d(TAG, "Distance: " + seekDistanceValue + " - Pace: " + seekPaceValue + " - Time: " + rb.getText());
 
     }
 
@@ -148,6 +188,26 @@ public class PairUsers extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (seekBar == sDistance){
+            d.setText("Change in Distance = " + sDistance.getProgress() + "%");
+        }
+        else if (seekBar == sPace){
+            p.setText("Change in Pace = " + sPace.getProgress() + "%");
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 
     /**
