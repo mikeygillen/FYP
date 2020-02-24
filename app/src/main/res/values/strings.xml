@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FYP</string>
+    <string name="app_name">Run</string>
     <string name="google_map_api_key">AIzaSyA4LEks4DWM21snwpf3mwL6EzprPwbvhmQ</string>
 
     <string-array name="gender_array">

@@ -81,9 +81,6 @@ public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListen
         }
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
 
-
-        // TODO: Add recycler view here
-
     }
 
     @Nullable
@@ -93,6 +90,7 @@ public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListen
         v = inflater.inflate(R.layout.fragment_pair_users, container, false);
 
         btnSearch = (Button) v.findViewById(R.id.btn_search_user);
+        rg = (RadioGroup) v.findViewById(R.id.TimePreferred);
 
         sDistance = (SeekBar) v.findViewById(R.id.SeekBarDistance);
         sDistance.setOnSeekBarChangeListener(this);
@@ -100,7 +98,7 @@ public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListen
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 d = (TextView) v.findViewById(R.id.DistanceSet);
-                d.setText("Change in Distance = " + sDistance.getProgress() + "%");
+                d.setText(Helper.seekbarPercentageConverter(sDistance.getProgress()));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -118,7 +116,7 @@ public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListen
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 p = (TextView) v.findViewById(R.id.PaceSet);
-                p.setText("Change in Pace = " + sPace.getProgress() + "%");
+                p.setText(Helper.seekbarPercentageConverter(sPace.getProgress()));
 
             }
             @Override
@@ -128,15 +126,6 @@ public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListen
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
-
-
-        rg = (RadioGroup) v.findViewById(R.id.TimePreferred);
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                rb = (RadioButton) v.findViewById(checkedId);
             }
         });
 
@@ -153,17 +142,15 @@ public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListen
     private void SearchUser() {
         btnSearch.setEnabled(false);
 
+        int selectedId = rg.getCheckedRadioButtonId();
+        rb = (RadioButton) v.findViewById(selectedId);
+
         int seekDistanceValue = sDistance.getProgress();
         int seekPaceValue = sPace.getProgress();
 
-        // get selected radio button from radioGroup
-        int selectedId = rg.getCheckedRadioButtonId();
-        // find the radiobutton by returned id
-        rb = (RadioButton) v.findViewById(selectedId);
-
-
         Log.d(TAG, "Distance: " + seekDistanceValue + " - Pace: " + seekPaceValue + " - Time: " + rb.getText());
 
+        btnSearch.setEnabled(true);
     }
 
         // TODO: Rename method, update argument and hook method into UI event
@@ -193,10 +180,10 @@ public class PairUsers extends Fragment implements SeekBar.OnSeekBarChangeListen
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (seekBar == sDistance){
-            d.setText("Change in Distance = " + sDistance.getProgress() + "%");
+            d.setText("Change in Distance = " + Helper.seekbarPercentageConverter(sDistance.getProgress()) + "%");
         }
         else if (seekBar == sPace){
-            p.setText("Change in Pace = " + sPace.getProgress() + "%");
+            p.setText("Change in Pace = " + Helper.seekbarPercentageConverter(sPace.getProgress()) + "%");
         }
     }
 

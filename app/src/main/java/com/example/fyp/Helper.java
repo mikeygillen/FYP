@@ -3,6 +3,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.RelativeLayout;
 
 
 public class Helper {
@@ -58,5 +59,17 @@ public class Helper {
         minutesCount -= minutes;
         long hoursCount = minutesCount / 60;
         return "" + hoursCount + ":" + minutes + ":" + seconds;
+    }
+
+    public static String seekbarPercentageConverter(int progress) {
+        double percent = progress - 100;
+
+        if (percent == 100 || percent > 50) {
+            return "Partner will be: " + percent + "% better than you";
+        } else if (percent == 0 || percent < 50) {
+            return "Partner will be: " + percent + "% below than you";
+        } else {
+            return "Partner will run Similar times ";
+        }
     }
 }
