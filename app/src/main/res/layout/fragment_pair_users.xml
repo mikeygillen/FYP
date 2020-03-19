@@ -5,7 +5,7 @@
 
     <RelativeLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#008577"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:scrollbarAlwaysDrawVerticalTrack="true">
 
@@ -55,16 +55,17 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="20dp">
+                    android:paddingTop="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
+                        android:elevation="10dp"
                         android:background="@drawable/customborder">
                     <TextView
                         android:labelFor="@id/SeekBarDistance"
-                        android:text="Distance Run"
+                        android:text="Distance Run avg."
                         android:fontFamily="sans-serif-light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -86,11 +87,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
+                    android:elevation="10dp"
                     android:background="@drawable/customborder">
                     <TextView
                         android:labelFor="@id/SeekBarPace"
-                        android:text="Pace of Run"
+                        android:text="Pace per KM avg."
                         android:fontFamily="sans-serif-light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -112,7 +114,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="5dp"
+                    android:elevation="10dp"
                     android:background="@drawable/customborder">
                     <TextView
                         android:text="Preferred time of Runs"
@@ -156,7 +159,7 @@
                         android:id="@+id/btn_search_user"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="15dp"
+                        android:layout_margin="12dp"
                         android:background="#d67601"
                         android:text="Search"
                         android:drawableTop="@drawable/ic_search"

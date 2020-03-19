@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    tools:context=".HomePage">
+    tools:context=".Activities.HomePageActivity">
 
 
     <fragment
@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".HomePage" />
+        tools:context=".Activities.HomePageActivity" />
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -35,7 +35,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="500dp"
             android:layout_gravity="center_horizontal"
-            android:text="End Run" />
+            android:text="Stop"
+            android:background="#D5FF0000"
+            android:textColor="@android:color/black"/>
 
         <Button
             android:id="@+id/btn_start"
@@ -43,7 +45,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="500dp"
             android:layout_gravity="center_horizontal"
-            android:text="Begin Run" />
+            android:text="Begin Run"
+            android:background="#D567FD00"
+            android:textColor="@android:color/white"/>
     </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

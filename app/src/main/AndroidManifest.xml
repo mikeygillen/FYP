@@ -20,10 +20,10 @@
         android:supportsRtl="true">
 
         <service
-            android:name=".HomePage"
+            android:name=".Activities.HomePageActivity"
             android:foregroundServiceType="location" />
 
-        <activity android:name=".EditProfile" />
+        <activity android:name=".Fragments.EditProfileFragment" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -33,7 +33,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -43,9 +43,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".HomePage"
+        <activity android:name=".Activities.HomePageActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
     </application>
 
