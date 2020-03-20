@@ -53,9 +53,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -72,7 +70,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -107,8 +107,8 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
     private String userid = mUser.getUid();
     private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
-    ArrayList<LatLng> latLngs = new ArrayList<>();
-    ArrayList<Location> locations = new ArrayList<>();
+    private ArrayList<Location> locations = new ArrayList<>();
+    private ArrayList<LatLng> LatLongs = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +168,7 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
     private void startRunTracking() {
         Log.d(TAG, "Route Tracking Start");
         locations.clear();
-        latLngs.clear();
+        LatLongs.clear();
 
         startTime = System.currentTimeMillis();
         mDistanceCovered = 0;
@@ -207,17 +207,15 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
         if (locations.isEmpty()){
             Log.d(TAG, "No Route found");
         }else {
-
             for (int i = 0; i < locations.size(); i++) {
-                latLngs.add(new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
-                Log.d(TAG, "Array list of routes = " + latLngs.get(i));
+                LatLongs.add(new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
             }
 
             final double d = calculateDistance(locations.get(0), locations.get(locations.size() - 1));
             final String t = Helper.secondToHHMMSS(elapsedTime());
             final double p = Helper.calculatePace(elapsedTime(), calculateDistance(locations.get(0), locations.get(locations.size()-1)));
 
-            final Route route = new Route(d, latLngs, userid);
+            final Route route = new Route(d, LatLongs, userid);
             String routeKey =  newRoute.push().getKey();
 
             newRoute.child(routeKey).setValue(route, new DatabaseReference.CompletionListener() {

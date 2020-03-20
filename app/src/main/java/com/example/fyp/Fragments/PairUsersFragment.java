@@ -80,7 +80,6 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-
     }
 
     @Nullable
