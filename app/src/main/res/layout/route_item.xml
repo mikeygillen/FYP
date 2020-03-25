@@ -1,44 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp">
+        android:layout_margin="8dp">
 
-        <ImageView
-            android:id="@+id/routeImage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="2dp" />
+    <LinearLayout
+        android:id="@+id/dateLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Run created on " />
+        <TextView
+            android:id="@+id/createdOnDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date" />
+    </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/distanceLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dateLayout"
+            android:orientation="horizontal">
         <TextView
             android:id="@+id/routeDistanceView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/routeImage"
             android:text="Route distance"
-            android:textColor="@android:color/black"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_toRightOf="@+id/routeImage" />
+            android:layout_marginLeft="10dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Km"/>
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/createdById"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/routeDistanceView"
-            android:layout_marginStart="8dp"
-            android:layout_toEndOf="@+id/routeImage"
-            android:text="Created by"
-            android:textSize="15sp"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/routeImage" />
+            android:layout_below="@+id/distanceLayout"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Created by - " />
+            <TextView
+                android:id="@+id/createdById"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="User Id here"
+                android:textSize="15sp"
+                android:layout_marginLeft="8dp" />
+        </LinearLayout>
 
     </RelativeLayout>
 

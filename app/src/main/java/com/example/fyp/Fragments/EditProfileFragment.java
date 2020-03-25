@@ -132,8 +132,6 @@ public class EditProfileFragment extends Fragment {
             private void updateLabel() {
                 String myFormat = "dd/mm/yy"; //In which you need put here
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.UK);
-
-                //dob.setText(sdf.format(myCalendar.getTime()));
             }
         };
 

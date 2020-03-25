@@ -1,6 +1,8 @@
 package com.example.fyp.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -8,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,23 +18,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.example.fyp.Activities.HomePageActivity;
 import com.example.fyp.Classes.Adapter;
 import com.example.fyp.Classes.Route;
+import com.example.fyp.Interface.Interface;
 import com.example.fyp.R;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
+import static com.google.android.material.floatingactionbutton.FloatingActionButton.*;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,15 +47,17 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
  * Use the {@link RouteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RouteFragment extends Fragment {
+public class RouteFragment extends Fragment implements Interface, Adapter.OnRouteListener, OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "RouteFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Button buttonAll, buttonCurrent, buttonOther;
 
     View v;
 
@@ -57,9 +65,12 @@ public class RouteFragment extends Fragment {
 
     private ArrayList<Route> routeList = new ArrayList<>();
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter<Adapter.ViewHolder> mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Routes");
+
+    private FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+    private String currentUserId = mUser.getUid();
 
     private OnFragmentInteractionListener mListener;
 
@@ -99,65 +110,158 @@ public class RouteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_routes, container, false);
-
         routeList.clear();
-
         String routeKey =  mRef.push().getKey();
 
+        buttonAll = (Button) v.findViewById(R.id.button_all_routes);
+        buttonCurrent = (Button) v.findViewById(R.id.button_my_routes);
+        buttonOther = (Button) v.findViewById(R.id.button_other_routes);
+
+        retrieveRoutes();
+        initRecyclerView();
+
+
+        //v.findViewById(R.id.fab).setOnClickListener(this);
+
+       // mNoteRepository = new NoteRepository(this);
+
+        //insertFakeNotes();
+
+        //setSupportActionBar((Toolbar)findViewById(R.id.notes_toolbar));
+        //setTitle("Notes");
+
+        return v;
+    }
+
+    public void retrieveRoutes(){
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                //List<Route> route = new ArrayList<>();
                 for (DataSnapshot result: snapshot.getChildren()){
-                    //route.add(child.getValue(Route.class));
-
-                    //mReadRoutes = result.getValue(Route.class);
-
                     String user = result.child("userId").getValue().toString();
-                    long image = (Long) result.child("routeImage").getValue();
+                    String created = result.child("createdOn").getValue().toString();
                     double distance = (Double) result.child("distance").getValue();
+                    ArrayList<LatLng> locations = (ArrayList<LatLng>) result.child("locations").getValue();
 
-                    Route route1 = new Route(image, distance, user);
+                    Log.d(TAG, "onDataChange: " + locations);
+                    for (int i=0; i<result.child("locations").getChildrenCount(); i++){
+                        double latitude = (double) result.child("locations").child(String.valueOf(i)).child("latitude").getValue();
+                        double longitude = (double) result.child("locations").child(String.valueOf(i)).child("longitude").getValue();
+
+                        routePoints.add(new LatLng(latitude, longitude));
+                    }
+
+                    Route route1 = new Route(distance, routePoints, user, created);
+                    //Route route1 = new Route(distance, user, created);
                     routeList.add(route1);
-
-                    Log.d(TAG, "Route Fragment Data GGGGGGHHGHGHGGHHGHGHGHGHGHGHGHGHGHGHGHGHGHGHGHGHGHGHGHGHGH");
-                    Log.d(TAG, "Route Data - " + routeList);
-                    Log.d(TAG, "Route image - " + image);
-                    Log.d(TAG, "Route distance - " + distance);
-                    Log.d(TAG, "Route userid - " + user);
                 }
-
-                /*GenericTypeIndicator<Map<String, Route>> gti = new GenericTypeIndicator<Map<String, Route>>() {};
-                Map<String, Route> mRoutes = snapshot.getValue(gti);
-                int j = mRoutes.size();
-
-                for (int i = 0; i == j; i++){
-                    Route mReadRoutes = snapshot.getValue(Route.class);
-                    String user = mReadRoutes.getUserId();
-                    int image = mReadRoutes.getRouteImage();
-                    double distance = mReadRoutes.getDistance();
-
-                    Route route1 = new Route(image, distance, user);
-                    routeList.add(route1);
-                }*/
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 System.out.println("The RouteFragment failed: ");
             }
         });
+    }
 
-            mRecyclerView = v.findViewById(R.id.routeRecyclerView);
+    /*public void getPolyline(){
+
+        polylineOptions = new PolylineOptions().clickable(true);
+        // Create polyline options with existing LatLng ArrayList
+        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Routes");
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot result : snapshot.getChildren()) {
+                    routePoints = (ArrayList<LatLng>) result.child("locations").getValue();
+                    Log.d(TAG, "onDataChange: " + routePoints);
+                    for (int i = 0; i < result.child("locations").getChildrenCount(); i++) {
+                        double latitude = (double) result.child("locations").child(String.valueOf(i)).child("latitude").getValue();
+                        double longitude = (double) result.child("locations").child(String.valueOf(i)).child("longitude").getValue();
+
+                        polylineOptions.add(new LatLng(latitude, longitude));
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+
+
+        polylineOptions.width(5).color(Color.RED).geodesic(true);
+        mMap.addPolyline(polylineOptions);
+    }*/
+
+            private void initRecyclerView(){
+        mRecyclerView = v.findViewById(R.id.routeRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new Adapter(routeList);
+        mAdapter = new Adapter(routeList, this);
+
+
+        //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
+        //mRecyclerView.addItemDecoration(itemDecorator);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-
-        return v;
     }
+
+
+
+    @Override
+    public void onClick(View v) {
+        Log.e(TAG, "onRouteClick clicked");
+        //Intent intent = new Intent(getContext(), HomePageActivity.class);
+        //startActivity(intent);
+    }
+
+    @Override
+    public void onRouteClick(int position) {
+        Log.e(TAG, "onRouteClick clicked position - " + position);
+
+        Log.d(TAG, "onRouteClick: " + routeList.get(position).getLocations());
+
+
+        HomePageActivity.mapRoute(routeList.get(position).getLocations());
+        //Intent intent = new Intent(this, NoteActivity.class);
+        //intent.putExtra("selected_note", mNotes.get(position));
+
+
+    }
+
+    /*private void deleteRoute(Route route) {
+        routeList.remove(route);
+        mAdapter.notifyDataSetChanged();
+
+        //Delete from firebase here
+        mNoteRepository.deleteNoteTask(note);
+    }*/
+
+    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            Log.e(TAG, "onSwiped swiped to delete");
+            //deleteRoute(routeList.get(viewHolder.getAdapterPosition()));
+        }
+    };
+
+    private void filterCurrent() {
+        Log.d(TAG, "filterCurrent Begin");
+    }
+    private void filterOther() {
+        Log.d(TAG, "filterOther Begin");
+
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

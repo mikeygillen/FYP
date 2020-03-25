@@ -6,43 +6,28 @@ import java.util.ArrayList;
 
 public class Route {
 
-    private long routeImage;
     private double distance;
     private ArrayList<LatLng> locations = new ArrayList<>();
-    private String userId;
+    private String userId, createdOn;
 
     public Route() {
         this.distance = 0.0;
         this.locations = null;
-        this.routeImage = 0;
         this.userId = "";
+        this.createdOn = "";
     }
 
-    public Route(long routeImage, double distance, String userId) {
-        this.routeImage = routeImage;
+    public Route(double distance, String userId, String createdOn) {
         this.distance = distance;
         this.userId = userId;
+        this.createdOn = createdOn;
     }
 
-    public Route(double distance, ArrayList<LatLng> locations, String userId) {
-        this.distance = distance;
-        this.locations = locations;
-        this.userId = userId;
-    }
-
-    public Route( double distance, ArrayList<LatLng> locations, long routeImage,  String userId) {
-        this.routeImage = routeImage;
+    public Route(double distance, ArrayList<LatLng> locations, String userId, String createdOn) {
         this.distance = distance;
         this.locations = locations;
         this.userId = userId;
-    }
-
-    public long getRouteImage() {
-        return routeImage;
-    }
-
-    public void setRouteImage(long routeImage) {
-        this.routeImage = routeImage;
+        this.createdOn = createdOn;
     }
 
     public double getDistance() {
@@ -67,5 +52,13 @@ public class Route {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
     }
 }

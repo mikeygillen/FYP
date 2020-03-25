@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -32,6 +33,7 @@ import com.example.fyp.Classes.Run;
 import com.example.fyp.Fragments.EditProfileFragment;
 import com.example.fyp.Helper.Helper;
 import com.example.fyp.Fragments.PairUsersFragment;
+import com.example.fyp.Interface.Interface;
 import com.example.fyp.R;
 import com.example.fyp.Classes.Route;
 import com.example.fyp.Fragments.RouteFragment;
@@ -52,14 +54,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
@@ -69,18 +75,17 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class HomePageActivity extends AppCompatActivity implements StatsFragment.OnFragmentInteractionListener, RouteFragment.OnFragmentInteractionListener, PairUsersFragment.OnFragmentInteractionListener, EditProfileFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
+public class HomePageActivity extends AppCompatActivity implements Interface, StatsFragment.OnFragmentInteractionListener, RouteFragment.OnFragmentInteractionListener, PairUsersFragment.OnFragmentInteractionListener, EditProfileFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback, LocationListener {
     private static final String TAG = "HomePageActivity";
 
-    private GoogleMap mMap;
+    private static GoogleMap mMap;
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -97,7 +102,7 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
 
     private static final int REQUEST_CODE = 101;
     private float mDistanceCovered;
-    private long startTime;
+    private long startTime, endTime;
 
     private Button startRun, endRun;
     private FirebaseAuth firebaseAuth;
@@ -107,8 +112,10 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
     private String userid = mUser.getUid();
     private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
-    private ArrayList<Location> locations = new ArrayList<>();
+    private static ArrayList<Location> locations = new ArrayList<>();
     private ArrayList<LatLng> LatLongs = new ArrayList<>();
+
+    private PolylineOptions polylineOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,8 +222,14 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
             final String t = Helper.secondToHHMMSS(elapsedTime());
             final double p = Helper.calculatePace(elapsedTime(), calculateDistance(locations.get(0), locations.get(locations.size()-1)));
 
-            final Route route = new Route(d, LatLongs, userid);
+            endTime = System.currentTimeMillis();
+            SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+            String strDate = formatter.format(endTime);
+
+            Log.d(TAG, "String Date = " + strDate);
+
             String routeKey =  newRoute.push().getKey();
+            final Route route = new Route(d, LatLongs, userid, strDate);
 
             newRoute.child(routeKey).setValue(route, new DatabaseReference.CompletionListener() {
                 public void onComplete(DatabaseError error, DatabaseReference ref) {
@@ -224,8 +237,8 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
                 }
             });
 
-            final Run run = new Run(t, p, userid, routeKey);
             String runKey = newRun.push().getKey();
+            final Run run = new Run(t, p, userid, routeKey);
 
             newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
                 public void onComplete(DatabaseError error, DatabaseReference ref) {
@@ -436,11 +449,9 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
 
     @Override
     public void onLocationChanged(Location location) {
-
         if (mCurrentMarker != null) {
             mCurrentMarker.remove();
         }
-
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
@@ -458,6 +469,28 @@ public class HomePageActivity extends AppCompatActivity implements StatsFragment
             fusedLocationClient.removeLocationUpdates(mLocationCallback);
         }
     }
+
+    public static void mapRoute(ArrayList<LatLng> routePoints) {
+        Log.d(TAG, "mapRoute beginning.... ");
+
+        Log.d(TAG, "mapRoute: routePoints = " + routePoints);
+
+        int length = routePoints.size();
+        // Store a data object with the polygon,
+        // used here to indicate an arbitrary type.
+        PolylineOptions poly = new PolylineOptions().clickable(true);
+
+        for(int i = 0; i < length; i++) {
+            if (routePoints.get(i) != null) {
+                LatLng latLong = new LatLng(routePoints.get(i).latitude, routePoints.get(i).longitude);
+                poly.add(latLong);
+            }
+
+            poly.width(5).color(Color.RED).geodesic(true);
+            mMap.addPolyline(poly);
+        }
+    }
+
 
     @Override
     protected void onStart(){
