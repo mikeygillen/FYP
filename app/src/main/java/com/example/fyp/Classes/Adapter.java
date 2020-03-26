@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fyp.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
@@ -41,7 +43,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         try{
             Route currentItem = mAllRoutes.get(position);
             //DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentItem.getUserId());
-            //holder.user.setText(mUserRef.getClass());
+            //holder.user.setText(mUserRef.child("Gender").getRoot());
+
+            //String user = result.child("userId").getValue().toString();
 
             holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance() * 100.0) / 100.0));
             holder.user.setText(currentItem.getUserId());
@@ -85,9 +89,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     /*@Override
     public int getItemCount() {
         return mFilterRoutes.size();
-    }
+    }*/
 
-    public void noFilter() {
+    /*public void noFilter() {
         mFilterRoutes = mAllRoutes;
         notifyDataSetChanged();
     }
@@ -110,7 +114,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             }
         }
         notifyDataSetChanged();
-    }*/
+    }//*/
 
 
 }

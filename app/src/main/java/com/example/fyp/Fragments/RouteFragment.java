@@ -122,18 +122,23 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
         buttonOther = (Button) v.findViewById(R.id.button_other_routes);
 
         retrieveRoutes();
-        initRecyclerView();
+        initRecyclerView(routeList);
 
-
-        //v.findViewById(R.id.fab).setOnClickListener(this);
-
-       // mNoteRepository = new NoteRepository(this);
-
-        //insertFakeNotes();
-
-        //setSupportActionBar((Toolbar)findViewById(R.id.notes_toolbar));
-        //setTitle("Notes");
-
+        buttonAll.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                initRecyclerView(routeList);
+            }
+        });
+        buttonOther.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                filterOther();
+            }
+        });
+        buttonCurrent.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                filterCurrent();
+            }
+        });
         return v;
     }
 
@@ -166,11 +171,35 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
         });
     }
 
-            private void initRecyclerView(){
+    private void filterCurrent() {
+        Log.d(TAG, "filterCurrent Begin");
+
+        ArrayList<Route> mFilterList = new ArrayList<>();
+        for(Route route : routeList) {
+            if(route.getUserId().equals(currentUserId)) {
+                mFilterList.add(route);
+            }
+        }
+        initRecyclerView(mFilterList);
+    }
+
+    private void filterOther() {
+        Log.d(TAG, "filterOther Begin");
+        ArrayList<Route> mFilterList = new ArrayList<>();
+        for(Route route : routeList) {
+            if(!route.getUserId().equals(currentUserId)) {
+                mFilterList.add(route);
+            }
+        }
+        initRecyclerView(mFilterList);
+    }
+
+
+    private void initRecyclerView(ArrayList<Route> list){
         mRecyclerView = v.findViewById(R.id.routeRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new Adapter(routeList, this);
+        mAdapter = new Adapter(list, this);
 
 
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
@@ -199,7 +228,7 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
 
         HomePageActivity.mapRoute(routeList.get(position).getLocations());
 
-        getActivity().getFragmentManager().popBackStack();
+        //getActivity().getFragmentManager().popBackStack();
 
         //getActivity().finish();
         //Intent intent = new Intent(this, NoteActivity.class);
@@ -228,15 +257,6 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
             //deleteRoute(routeList.get(viewHolder.getAdapterPosition()));
         }
     };
-
-    private void filterCurrent() {
-        Log.d(TAG, "filterCurrent Begin");
-    }
-    private void filterOther() {
-        Log.d(TAG, "filterOther Begin");
-
-    }
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
