@@ -8,6 +8,6 @@ import java.util.ArrayList;
 
 public interface Interface {
     //ArrayList<Route> routeList = new ArrayList<>();
-    ArrayList<LatLng> routePoints = new ArrayList<>();
+    //ArrayList<LatLng> routePoints = new ArrayList<>();
     //PolylineOptions polylineOptions = new PolylineOptions();
 }

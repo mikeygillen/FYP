@@ -2,12 +2,13 @@ package com.example.fyp.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.fyp.Activities.HomePageActivity;
 import com.example.fyp.Classes.Adapter;
@@ -64,6 +66,8 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
     private Route mReadRoutes = new Route();
 
     private ArrayList<Route> routeList = new ArrayList<>();
+    //private ArrayList<LatLng> routePoints = new ArrayList<>();
+
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter<Adapter.ViewHolder> mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -137,14 +141,13 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot result: snapshot.getChildren()){
+                for (DataSnapshot result : snapshot.getChildren()) {
                     String user = result.child("userId").getValue().toString();
                     String created = result.child("createdOn").getValue().toString();
                     double distance = (Double) result.child("distance").getValue();
-                    ArrayList<LatLng> locations = (ArrayList<LatLng>) result.child("locations").getValue();
 
-                    Log.d(TAG, "onDataChange: " + locations);
-                    for (int i=0; i<result.child("locations").getChildrenCount(); i++){
+                    ArrayList<LatLng> routePoints = new ArrayList<>();
+                    for (int i = 0; i < result.child("locations").getChildrenCount(); i++) {
                         double latitude = (double) result.child("locations").child(String.valueOf(i)).child("latitude").getValue();
                         double longitude = (double) result.child("locations").child(String.valueOf(i)).child("longitude").getValue();
 
@@ -152,48 +155,16 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
                     }
 
                     Route route1 = new Route(distance, routePoints, user, created);
-                    //Route route1 = new Route(distance, user, created);
+                    Log.d(TAG, "onDataChange: route1 - " + route1.getLocations());
                     routeList.add(route1);
                 }
             }
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 System.out.println("The RouteFragment failed: ");
             }
         });
     }
-
-    /*public void getPolyline(){
-
-        polylineOptions = new PolylineOptions().clickable(true);
-        // Create polyline options with existing LatLng ArrayList
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Routes");
-        mRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot result : snapshot.getChildren()) {
-                    routePoints = (ArrayList<LatLng>) result.child("locations").getValue();
-                    Log.d(TAG, "onDataChange: " + routePoints);
-                    for (int i = 0; i < result.child("locations").getChildrenCount(); i++) {
-                        double latitude = (double) result.child("locations").child(String.valueOf(i)).child("latitude").getValue();
-                        double longitude = (double) result.child("locations").child(String.valueOf(i)).child("longitude").getValue();
-
-                        polylineOptions.add(new LatLng(latitude, longitude));
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-
-
-
-        polylineOptions.width(5).color(Color.RED).geodesic(true);
-        mMap.addPolyline(polylineOptions);
-    }*/
 
             private void initRecyclerView(){
         mRecyclerView = v.findViewById(R.id.routeRecyclerView);
@@ -219,14 +190,18 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
         //startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onRouteClick(int position) {
-        Log.e(TAG, "onRouteClick clicked position - " + position);
+        Log.d(TAG, "onRouteClick: ");
 
-        Log.d(TAG, "onRouteClick: " + routeList.get(position).getLocations());
-
+        Toast.makeText(getActivity(), "Item clicked" + routeList.get(position).getDistance(), Toast.LENGTH_LONG).show();
 
         HomePageActivity.mapRoute(routeList.get(position).getLocations());
+
+        getActivity().getFragmentManager().popBackStack();
+
+        //getActivity().finish();
         //Intent intent = new Intent(this, NoteActivity.class);
         //intent.putExtra("selected_note", mNotes.get(position));
 

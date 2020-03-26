@@ -54,18 +54,15 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
@@ -472,8 +469,20 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
     public static void mapRoute(ArrayList<LatLng> routePoints) {
         Log.d(TAG, "mapRoute beginning.... ");
+        mMap.clear();
 
-        Log.d(TAG, "mapRoute: routePoints = " + routePoints);
+        MarkerOptions startPoint = new MarkerOptions();
+        startPoint.position(routePoints.get(0));
+        startPoint.title("Start Point");
+        startPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        mMap.addMarker(startPoint);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(routePoints.get(0)));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        MarkerOptions endPoint = new MarkerOptions();
+        endPoint.position(routePoints.get(routePoints.size() - 1));
+        endPoint.title("End Point");
+        endPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        mMap.addMarker(endPoint);
 
         int length = routePoints.size();
         // Store a data object with the polygon,
@@ -486,7 +495,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 poly.add(latLong);
             }
 
-            poly.width(5).color(Color.RED).geodesic(true);
+            poly.width(8).color(Color.RED).geodesic(true);
             mMap.addPolyline(poly);
         }
     }
