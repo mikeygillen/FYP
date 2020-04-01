@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -83,6 +84,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private static final String TAG = "HomePageActivity";
 
     private static GoogleMap mMap;
+
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -101,7 +103,8 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private float mDistanceCovered;
     private long startTime, endTime;
 
-    private Button startRun, endRun;
+    private static Button startRun;
+    private Button endRun;
     private FirebaseAuth firebaseAuth;
     private FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
     private DatabaseReference newRoute = FirebaseDatabase.getInstance().getReference("Routes");
@@ -113,6 +116,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private ArrayList<LatLng> LatLongs = new ArrayList<>();
 
     private PolylineOptions polylineOptions;
+    private static Fragment fragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -268,7 +272,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Fragment fragment = null;
+        //Fragment fragment = null;
 
         switch (item.getItemId()) {
             case R.id.navigation_home:
@@ -435,9 +439,17 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        Intent i = getIntent();
+        ArrayList<LatLng> routePoints = i.getParcelableArrayListExtra("route_points");
+        Log.d(TAG, "onMapReady: INTENT RECEIVED - " + routePoints);
+
         if (checkPermissions()){
-            getLastLocation();
-            mMap.setMyLocationEnabled(true);
+            if (routePoints!=null){
+                mapRoute(routePoints);
+            }else {
+                getLastLocation();
+                mMap.setMyLocationEnabled(true);
+            }
         }else{
             requestPermissions();
             mMap.setMyLocationEnabled(true);
@@ -476,19 +488,18 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         startPoint.title("Start Point");
         startPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mMap.addMarker(startPoint);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(routePoints.get(0)));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(startPoint.getPosition().latitude, startPoint.getPosition().longitude), 15.0f));
+
         MarkerOptions endPoint = new MarkerOptions();
         endPoint.position(routePoints.get(routePoints.size() - 1));
         endPoint.title("End Point");
         endPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mMap.addMarker(endPoint);
 
-        int length = routePoints.size();
-        // Store a data object with the polygon,
-        // used here to indicate an arbitrary type.
         PolylineOptions poly = new PolylineOptions().clickable(true);
 
+        int length = routePoints.size();
         for(int i = 0; i < length; i++) {
             if (routePoints.get(i) != null) {
                 LatLng latLong = new LatLng(routePoints.get(i).latitude, routePoints.get(i).longitude);

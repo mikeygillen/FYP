@@ -135,18 +135,25 @@ public class EditProfileFragment extends Fragment {
             }
         };
 
-        mRef.addValueEventListener(new ValueEventListener() {
+       /* mRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                txtHeight.setText(dataSnapshot.child("height").getValue(String.class));
-                txtWeight.setText(dataSnapshot.child("weight").getValue(String.class));
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot result : snapshot.getChildren()) {
+
+                    datePicker = (DatePicker) result.child("Birth Date").getValue();
+                    Gender = (Spinner) result.child("Gender").getValue();
+                    txtHeight = (EditText) result.child("Height").getValue();
+                    txtWeight = (EditText) result.child("Weight").getValue();
+                    //txtName = result.child("Name").getValue();
+
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override

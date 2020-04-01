@@ -27,6 +27,7 @@ import com.example.fyp.Classes.Adapter;
 import com.example.fyp.Classes.Route;
 import com.example.fyp.Interface.Interface;
 import com.example.fyp.R;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +39,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.google.android.material.floatingactionbutton.FloatingActionButton.*;
 
@@ -201,7 +203,6 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
         mLayoutManager = new LinearLayoutManager(getActivity());
         mAdapter = new Adapter(list, this);
 
-
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         //mRecyclerView.addItemDecoration(itemDecorator);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
@@ -215,7 +216,7 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
     @Override
     public void onClick(View v) {
         Log.e(TAG, "onRouteClick clicked");
-        //Intent intent = new Intent(getContext(), HomePageActivity.class);
+        //Intent intent = new Intent(getActivity(), HomePageActivity.class);
         //startActivity(intent);
     }
 
@@ -223,18 +224,11 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
     @Override
     public void onRouteClick(int position) {
         Log.d(TAG, "onRouteClick: ");
-
         Toast.makeText(getActivity(), "Item clicked" + routeList.get(position).getDistance(), Toast.LENGTH_LONG).show();
-
-        HomePageActivity.mapRoute(routeList.get(position).getLocations());
-
-        //getActivity().getFragmentManager().popBackStack();
-
-        //getActivity().finish();
-        //Intent intent = new Intent(this, NoteActivity.class);
-        //intent.putExtra("selected_note", mNotes.get(position));
-
-
+        ArrayList<LatLng> routePoints = new ArrayList<>(routeList.get(position).getLocations());
+        Intent intent = new Intent(getActivity(), HomePageActivity.class);
+        intent.putExtra("route_points", routePoints);
+        startActivity(intent);
     }
 
     /*private void deleteRoute(Route route) {
