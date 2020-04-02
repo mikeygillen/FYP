@@ -135,26 +135,6 @@ public class EditProfileFragment extends Fragment {
             }
         };
 
-       /* mRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot result : snapshot.getChildren()) {
-
-                    datePicker = (DatePicker) result.child("Birth Date").getValue();
-                    Gender = (Spinner) result.child("Gender").getValue();
-                    txtHeight = (EditText) result.child("Height").getValue();
-                    txtWeight = (EditText) result.child("Weight").getValue();
-                    //txtName = result.child("Name").getValue();
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });*/
-
         datePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,6 +145,32 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 UpdateUser();
+            }
+        });
+
+        mRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    try {
+                        String date = snapshot.child("Birth Date").getValue().toString();
+                        String segments[] = date.split("-");
+                        int year = Integer.parseInt(segments[segments.length - 1]);
+                        int month = Integer.parseInt(segments[segments.length - 2]);
+                        int day = Integer.parseInt(segments[segments.length - 3]);
+
+                        datePicker.updateDate(year, month, day);
+                        txtHeight.setText(snapshot.child("Height").getValue().toString());
+                        txtWeight.setText(snapshot.child("Weight").getValue().toString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "Please update values" , Toast.LENGTH_LONG).show();
+                    }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 

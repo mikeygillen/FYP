@@ -3,10 +3,21 @@ package com.example.fyp.Classes;
 public class User {
 
     protected String name, email, height, weight, dob, gender, preferredTime;
-    protected float distanceCovered, distanceAvg, paceAvg;
+    protected float distanceCovered, distanceAvg, paceAvg, totalRunTime;
     protected int totalRuns;
 
-    public User(){
+    public User(String name, String email, String height, String weight, String dob, String gender, float distanceCovered, float distanceAvg, float paceAvg, float totalRunTime, int totalRuns) {
+        this.name = "";
+        this.email = "";
+        this.height = "";
+        this.weight = "";
+        this.dob = "";
+        this.gender = "";
+        this.distanceCovered = 0;
+        this.distanceAvg = 0;
+        this.paceAvg = 0;
+        this.totalRunTime = 0;
+        this.totalRuns = 0;
     }
 
     public User(String name, String email) {
@@ -98,7 +109,7 @@ public class User {
     }
 
     public float getDistanceAvg() {
-        return distanceAvg;
+        return distanceCovered / totalRuns;
     }
 
     public void setDistanceAvg(float distanceAvg) {
@@ -106,12 +117,16 @@ public class User {
     }
 
     public float getPaceAvg() {
-        return paceAvg;
+        return distanceCovered / totalRunTime;
     }
 
     public void setPaceAvg(float paceAvg) {
         this.paceAvg = paceAvg;
     }
+
+    public float getTotalRunTime() { return totalRunTime; }
+
+    public void setTotalRunTime(float totalRunTime) { this.totalRunTime = totalRunTime; }
 
     public int getTotalRuns() {
         return totalRuns;

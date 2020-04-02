@@ -104,24 +104,6 @@
                         android:hint="(kg)"
                         android:inputType="numberDecimal"/>
 
-                    <TextView
-                        android:labelFor="@id/text_password"
-                        android:text="password"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <EditText
-                        android:drawablePadding="5dp"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:id="@+id/text_password"
-                        android:drawableLeft="@drawable/ic_lock"
-                        android:hint="Password"
-                        android:inputType="textPassword"/>
-
-
                     <Button
                         android:id="@+id/button_update"
                         android:layout_width="fill_parent"

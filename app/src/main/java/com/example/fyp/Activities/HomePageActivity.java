@@ -247,6 +247,10 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 }
             });
 
+           /* mUserRef.child("TotalRuns").setValue(currentTotal + 1);
+            mUserRef.child("TotalDistance").setValue(currentTotal + d);
+            mUserRef.child("AvgPace").setValue(currentTotal + p);*/
+
             Log.d(TAG, "Route Tracking Finished");
         }
     }
@@ -272,8 +276,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        //Fragment fragment = null;
-
         switch (item.getItemId()) {
             case R.id.navigation_home:
                 startRun.setVisibility(View.VISIBLE);
@@ -301,7 +303,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 fragment = new PairUsersFragment();
                 break;
         }
-
         return loadFragment(fragment);
     }
 
