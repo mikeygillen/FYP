@@ -56,7 +56,7 @@ public class EditProfileFragment extends Fragment {
 
     View v;
 
-    EditText txtHeight, txtWeight, txtPassword;
+    EditText txtHeight, txtWeight;
     DatePicker datePicker;
     Spinner Gender;
     Button btnupdate;
@@ -110,7 +110,6 @@ public class EditProfileFragment extends Fragment {
         btnupdate = (Button) v.findViewById(R.id.button_update);
         txtHeight = (EditText) v.findViewById(R.id.text_height);
         txtWeight = (EditText) v.findViewById(R.id.text_weight);
-        txtPassword= (EditText) v.findViewById(R.id.text_password);
 
         Gender = (Spinner) v.findViewById(R.id.text_gender);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.gender_array, android.R.layout.simple_spinner_item);

@@ -61,9 +61,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
@@ -110,7 +112,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private DatabaseReference newRoute = FirebaseDatabase.getInstance().getReference("Routes");
     private DatabaseReference newRun = FirebaseDatabase.getInstance().getReference("Runs");
     private String userid = mUser.getUid();
-    private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+    private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
     private static ArrayList<Location> locations = new ArrayList<>();
     private ArrayList<LatLng> LatLongs = new ArrayList<>();
@@ -239,7 +241,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             });
 
             String runKey = newRun.push().getKey();
-            final Run run = new Run(t, p, userid, routeKey);
+            final Run run = new Run(p, d, t, userid, routeKey);
 
             newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
                 public void onComplete(DatabaseError error, DatabaseReference ref) {
@@ -247,11 +249,32 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 }
             });
 
-           /* mUserRef.child("TotalRuns").setValue(currentTotal + 1);
-            mUserRef.child("TotalDistance").setValue(currentTotal + d);
-            mUserRef.child("AvgPace").setValue(currentTotal + p);*/
-
             Log.d(TAG, "Route Tracking Finished");
+
+            mRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    try {
+                        double tDis = (double) snapshot.child("Total Distance").getValue();
+                        int tRuns = (int) snapshot.child("Total Runs").getValue();
+                        //double aPace = (double) snapshot.child("Average Pace").getValue();
+
+                        mRef.child("Total Distance").setValue(tDis + d);
+                        mRef.child("Total Runs").setValue(tRuns + 1);
+                        //mRef.child("Average Pace").setValue(aPace + p);
+
+                    } catch (Exception e) {
+                        Log.d(TAG, "Users first run: Setting totals in Database");
+                        mRef.child("Total Distance").setValue(d);
+                        mRef.child("Total Runs").setValue(1);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
     }
 

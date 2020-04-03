@@ -63,12 +63,15 @@
                         android:background="@android:color/darker_gray"/>
 
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view"
+                        android:id="@+id/personalRecycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:background="@android:color/darker_gray"
+                        android:padding="4dp"
+                        android:scrollbars="vertical"/>
 
                     <Button
                         android:id="@+id/btn_update"

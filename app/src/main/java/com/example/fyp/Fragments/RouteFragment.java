@@ -23,13 +23,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.fyp.Activities.HomePageActivity;
-import com.example.fyp.Classes.Adapter;
+import com.example.fyp.Adapters.RouteAdapter;
 import com.example.fyp.Classes.Route;
 import com.example.fyp.Interface.Interface;
 import com.example.fyp.R;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +37,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import static com.google.android.material.floatingactionbutton.FloatingActionButton.*;
 
@@ -51,7 +48,7 @@ import static com.google.android.material.floatingactionbutton.FloatingActionBut
  * Use the {@link RouteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RouteFragment extends Fragment implements Interface, Adapter.OnRouteListener, OnClickListener {
+public class RouteFragment extends Fragment implements Interface, RouteAdapter.OnRouteListener, OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -71,7 +68,7 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
     //private ArrayList<LatLng> routePoints = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter<Adapter.ViewHolder> mAdapter;
+    private RecyclerView.Adapter<RouteAdapter.ViewHolder> mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Routes");
 
@@ -201,7 +198,7 @@ public class RouteFragment extends Fragment implements Interface, Adapter.OnRout
         mRecyclerView = v.findViewById(R.id.routeRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new Adapter(list, this);
+        mAdapter = new RouteAdapter(list, this);
 
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         //mRecyclerView.addItemDecoration(itemDecorator);

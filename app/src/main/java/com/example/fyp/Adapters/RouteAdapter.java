@@ -1,4 +1,4 @@
-package com.example.fyp.Classes;
+package com.example.fyp.Adapters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,13 +9,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fyp.Classes.Route;
 import com.example.fyp.R;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> {
     private static final String TAG = "RoutesRecyclerAdapter";
 
     private ArrayList<Route> mAllRoutes; //Shows all routes
@@ -24,7 +23,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     private OnRouteListener mOnRouteListener;
 
     //Passes data to be shown in recycler view through here
-    public Adapter(ArrayList<Route> routeList, OnRouteListener onRouteListener) {
+    public RouteAdapter(ArrayList<Route> routeList, OnRouteListener onRouteListener) {
         this.mAllRoutes = routeList;
         mFilterRoutes = (ArrayList<Route>) mAllRoutes.clone();
 

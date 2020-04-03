@@ -15,7 +15,7 @@
         <item>Slowest</item>
     </string-array>
 
-    <string-array name="personal_filer">
+    <string-array name="personal_filter">
         <item>General</item>
         <item>Furthest Distance</item>
         <item>Shortest Distance</item>
