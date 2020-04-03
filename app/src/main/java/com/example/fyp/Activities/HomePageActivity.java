@@ -253,23 +253,28 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             });
             Log.d(TAG, "Route Tracking Finished");
 
-            mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    try {
-                        double tDis = ((double) snapshot.child("Total Distance").getValue()) + d;
-                        mUserRef.child("Total Distance").setValue(tDis);
+            try {
+                mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        try {
+                            double tDis = ((double) snapshot.child("Total Distance").getValue()) + d;
+                            mUserRef.child("Total Distance").setValue(tDis);
 
-                        int tRuns = ((Integer) snapshot.child("Total Runs").getValue()) + 1;
-                        mUserRef.child("Total Runs").setValue(tRuns);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                            int tRuns = ((Integer) snapshot.child("Total Runs").getValue()) + 1;
+                            mUserRef.child("Total Runs").setValue(tRuns);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
-            });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+            } catch (Exception e) {
+                Log.d(TAG, "Update user totals: FAILED " + e);
+                e.printStackTrace();
+            }
         }
     }
 
