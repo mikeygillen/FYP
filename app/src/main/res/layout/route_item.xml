@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Run created on " />
+            android:text="Route created on " />
         <TextView
             android:id="@+id/createdOnDate"
             android:layout_width="wrap_content"

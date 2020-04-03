@@ -23,6 +23,14 @@ public class Run {
         this.routeId = routeId;
     }
 
+    public Run(String duration, double distance, double pace, String routeId, String userid) {
+        this.duration = duration;
+        this.distance = distance;
+        this.pace = pace;
+        this.routeId = routeId;
+        this.userId = userid;
+    }
+
     /*public Run(double pace, double distance, String duration, String userId, String routeId) {
         this.pace = pace;
         this.distance = distance;

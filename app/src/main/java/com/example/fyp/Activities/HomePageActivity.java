@@ -112,7 +112,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private DatabaseReference newRoute = FirebaseDatabase.getInstance().getReference("Routes");
     private DatabaseReference newRun = FirebaseDatabase.getInstance().getReference("Runs");
     private String userid = mUser.getUid();
-    private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+    private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(userid);
 
     private static ArrayList<Location> locations = new ArrayList<>();
     private ArrayList<LatLng> LatLongs = new ArrayList<>();
@@ -224,6 +224,9 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             final double d = calculateDistance(locations.get(0), locations.get(locations.size() - 1));
             final String t = Helper.secondToHHMMSS(elapsedTime());
             final double p = Helper.calculatePace(elapsedTime(), calculateDistance(locations.get(0), locations.get(locations.size()-1)));
+            Log.d(TAG, "endRunTracking: Pace - " + p);
+            Log.d(TAG, "endRunTracking: Distance - " + d);
+            Log.d(TAG, "endRunTracking: Duration - " + t);
 
             endTime = System.currentTimeMillis();
             SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
@@ -241,38 +244,30 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             });
 
             String runKey = newRun.push().getKey();
-            final Run run = new Run(p, d, t, userid, routeKey);
+            final Run run = new Run(t, d, p, routeKey, userid);
 
             newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
                 public void onComplete(DatabaseError error, DatabaseReference ref) {
                     Log.d("ssd", "onComplete: " + error);
                 }
             });
-
             Log.d(TAG, "Route Tracking Finished");
 
-            mRef.addValueEventListener(new ValueEventListener() {
+            mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {
-                        double tDis = (double) snapshot.child("Total Distance").getValue();
-                        int tRuns = (int) snapshot.child("Total Runs").getValue();
-                        //double aPace = (double) snapshot.child("Average Pace").getValue();
+                        double tDis = ((double) snapshot.child("Total Distance").getValue()) + d;
+                        mUserRef.child("Total Distance").setValue(tDis);
 
-                        mRef.child("Total Distance").setValue(tDis + d);
-                        mRef.child("Total Runs").setValue(tRuns + 1);
-                        //mRef.child("Average Pace").setValue(aPace + p);
-
+                        int tRuns = ((Integer) snapshot.child("Total Runs").getValue()) + 1;
+                        mUserRef.child("Total Runs").setValue(tRuns);
                     } catch (Exception e) {
-                        Log.d(TAG, "Users first run: Setting totals in Database");
-                        mRef.child("Total Distance").setValue(d);
-                        mRef.child("Total Runs").setValue(1);
+                        e.printStackTrace();
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 }
             });
         }

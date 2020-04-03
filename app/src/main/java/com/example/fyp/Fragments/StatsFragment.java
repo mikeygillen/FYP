@@ -38,8 +38,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import static androidx.constraintlayout.widget.Constraints.TAG;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,10 +52,13 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "StatsFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Spinner filter;
+    private Button btnFilter;
 
     View v;
 
@@ -66,18 +67,16 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     private ArrayList<Run> runList = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter<RunAdapter.ViewHolder> mAdapter;
+    private RecyclerView.Adapter<RunAdapter.ViewHolder> mRunAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private DatabaseReference mRunRef = FirebaseDatabase.getInstance().getReference("Runs");
 
     private FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
     private String currentUserId = mUser.getUid();
-
-    private DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("Runs").child(currentUserId);
+    private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUserId);
 
     private OnFragmentInteractionListener mListener;
 
-    Spinner filter;
-    Button btnFilter;
 
     public StatsFragment() {
         // Required empty public constructor
@@ -119,7 +118,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_stats, container, false);
         runList.clear();
-        String runKey =  mRef.push().getKey();
+        String runKey =  mRunRef.push().getKey();
 
         btnFilter = (Button) v.findViewById(R.id.btn_update);
         filter = (Spinner) v.findViewById(R.id.text_filter);
@@ -140,24 +139,28 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     }
 
     public void retrieveRuns(){
-        mRef.addValueEventListener(new ValueEventListener() {
+        mRunRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot result : snapshot.getChildren()) {
+                    try {
+                        String duration = result.child("duration").getValue().toString();
+                        //double pace = (Double) result.child("pace").getValue();
+                        double distance = (Double) result.child("distance").getValue();
+                        String route = result.child("routeId").getValue().toString();
 
-                    String duration = result.child("duration").getValue().toString();
-                    double pace = (Double) result.child("pace").getValue();
-                    double distance = (Double) result.child("distance").getValue();
-                    String route = result.child("routeId").getValue().toString();
-
-                    Run run1 = new Run(duration, distance, pace, route);
-                    Log.d(TAG, "onDataChange: run1 - " + run1);
-                    runList.add(run1);
+                        //Run run1 = new Run(duration, distance, pace, route);
+                        Run run1 = new Run(duration, distance, 5, route);
+                        Log.d(TAG, "onDataChange: run1 - " + run1.getDistance());
+                        runList.add(run1);
+                    } catch (Exception e) {
+                        Log.d(TAG, "onDataChange: FAILED");
+                    }
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("The RunFragment failed: ");
+                System.out.println("The StatsFragment failed: ");
             }
         });
     }
@@ -180,14 +183,14 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         mRecyclerView = v.findViewById(R.id.personalRecycler_view);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
-        mAdapter = new RunAdapter(list, (RunAdapter.OnRunListener) this);
+        mRunAdapter = new RunAdapter(list, this);
 
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         //mRecyclerView.addItemDecoration(itemDecorator);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
 
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mRunAdapter);
     }
 
 
@@ -209,8 +212,8 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         startActivity(intent);
     }
 
-    /*private void deleteRoute(Route route) {
-        routeList.remove(route);
+    /*private void deleteRun(Run run) {
+        runList.remove(run);
         mAdapter.notifyDataSetChanged();
 
         //Delete from firebase here

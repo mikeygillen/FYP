@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fyp.Classes.User;
 import com.example.fyp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -102,7 +103,12 @@ public class MainActivity extends AppCompatActivity{
 
                     mCurrentUser[0] = task.getResult().getUser();
                     newUser[0] = mDatabase.child(mCurrentUser[0].getUid());
-                    newUser[0].child("Name").setValue(name);
+
+                    User user = new User(name, email, 0, 0);
+                    newUser[0].setValue(user);
+                    //newUser[0].child("Name").setValue(name);
+                    //newUser[0].child("Total Distance").setValue(0);
+                    //newUser[0].child("Total Runs").setValue(0);
 
                     onSignupSuccess();
                 } else {

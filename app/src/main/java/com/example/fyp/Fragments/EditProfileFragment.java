@@ -147,7 +147,7 @@ public class EditProfileFragment extends Fragment {
             }
         });
 
-        mRef.addValueEventListener(new ValueEventListener() {
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {

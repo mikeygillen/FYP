@@ -3,10 +3,10 @@ package com.example.fyp.Classes;
 public class User {
 
     protected String name, email, height, weight, dob, gender, preferredTime;
-    protected float distanceCovered, distanceAvg, paceAvg, totalRunTime;
+    protected double distanceCovered, distanceAvg, paceAvg, totalRunTime;
     protected int totalRuns;
 
-    public User(String name, String email, String height, String weight, String dob, String gender, float distanceCovered, float distanceAvg, float paceAvg, float totalRunTime, int totalRuns) {
+    public User(String name, String email, String height, String weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime, int totalRuns) {
         this.name = "";
         this.email = "";
         this.height = "";
@@ -20,9 +20,11 @@ public class User {
         this.totalRuns = 0;
     }
 
-    public User(String name, String email) {
+    public User(String name, String email, double distanceCovered, int totalRuns) {
         this.name = name;
         this.email = email;
+        this.distanceCovered = distanceCovered;
+        this.totalRuns = totalRuns;
     }
 
     public User(String height, String weight, String dob, String gender, String preferredTime) {
@@ -33,7 +35,7 @@ public class User {
         this.preferredTime = preferredTime;
     }
 
-    public User(String name, String email, String height, String weight, String dob, String gender, String preferredTime, float distanceCovered, float distanceAvg, float paceAvg, int totalRuns) {
+    public User(String name, String email, String height, String weight, String dob, String gender, String preferredTime, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
         this.name = name;
         this.email = email;
         this.height = height;
@@ -94,11 +96,11 @@ public class User {
         this.gender = gender;
     }
 
-    public float getDistanceCovered() {
+    public double getDistanceCovered() {
         return distanceCovered;
     }
 
-    public void setDistanceCovered(float distanceCovered) { this.distanceCovered = distanceCovered; }
+    public void setDistanceCovered(double distanceCovered) { this.distanceCovered = distanceCovered; }
 
     public String getPreferredTime() {
         return preferredTime;
@@ -108,25 +110,25 @@ public class User {
         this.preferredTime = preferredTime;
     }
 
-    public float getDistanceAvg() {
+    public double getDistanceAvg() {
         return distanceCovered / totalRuns;
     }
 
-    public void setDistanceAvg(float distanceAvg) {
+    public void setDistanceAvg(double distanceAvg) {
         this.distanceAvg = distanceAvg;
     }
 
-    public float getPaceAvg() {
+    public double getPaceAvg() {
         return distanceCovered / totalRunTime;
     }
 
-    public void setPaceAvg(float paceAvg) {
+    public void setPaceAvg(double paceAvg) {
         this.paceAvg = paceAvg;
     }
 
-    public float getTotalRunTime() { return totalRunTime; }
+    public double getTotalRunTime() { return totalRunTime; }
 
-    public void setTotalRunTime(float totalRunTime) { this.totalRunTime = totalRunTime; }
+    public void setTotalRunTime(double totalRunTime) { this.totalRunTime = totalRunTime; }
 
     public int getTotalRuns() {
         return totalRuns;

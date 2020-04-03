@@ -159,7 +159,7 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
                     }
 
                     Route route1 = new Route(distance, routePoints, user, created);
-                    Log.d(TAG, "onDataChange: route1 - " + route1.getLocations());
+                    Log.d(TAG, "onDataChange: route1 - " + route1.getDistance());
                     routeList.add(route1);
                 }
             }
