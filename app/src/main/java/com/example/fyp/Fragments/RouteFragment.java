@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,13 +20,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.fyp.Activities.HomePageActivity;
 import com.example.fyp.Adapters.RouteAdapter;
@@ -38,7 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import static com.google.android.material.floatingactionbutton.FloatingActionButton.*;
+import static com.google.android.material.floatingactionbutton.FloatingActionButton.OnClickListener;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -148,7 +147,7 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
                 for (DataSnapshot result : snapshot.getChildren()) {
                     String user = result.child("userId").getValue().toString();
                     String created = result.child("createdOn").getValue().toString();
-                    double distance = (Double) result.child("distance").getValue();
+                    double distance = new Double(result.child("distance").getValue().toString());
 
                     ArrayList<LatLng> routePoints = new ArrayList<>();
                     for (int i = 0; i < result.child("locations").getChildrenCount(); i++) {

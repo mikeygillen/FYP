@@ -80,9 +80,9 @@
                     <EditText
                         android:id="@+id/text_height"
                         android:layout_width="fill_parent"
-                        android:layout_height="34dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content"
                         android:drawablePadding="5dp"
+                        android:layout_marginBottom="5dp"
                         android:hint="(cm)"
                         android:inputType="numberDecimal"
                         android:singleLine="true" />

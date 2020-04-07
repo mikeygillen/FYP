@@ -2,14 +2,15 @@ package com.example.fyp.Classes;
 
 public class Run {
     protected double pace, distance;
-    protected String userId, routeId, duration;
+    protected String userId, routeId, duration, createdOn;
 
-    public Run(double pace, double distance, String duration, String userId, String routeId) {
+    public Run(double pace, double distance, String duration, String userId, String routeId, String createdOn) {
         this.pace = 0;
         this.distance = 0;
         this.userId = "";
         this.routeId = "";
         this.duration = "";
+        this.createdOn = "";
     }
 
     public Run() {
@@ -23,12 +24,13 @@ public class Run {
         this.routeId = routeId;
     }
 
-    public Run(String duration, double distance, double pace, String routeId, String userid) {
+    public Run(String duration, double distance, double pace, String routeId, String userid, String createdOn) {
         this.duration = duration;
         this.distance = distance;
         this.pace = pace;
         this.routeId = routeId;
         this.userId = userid;
+        this.createdOn = createdOn;
     }
 
     /*public Run(double pace, double distance, String duration, String userId, String routeId) {
@@ -77,6 +79,14 @@ public class Run {
 
     public void setRouteId(String routeId) {
         this.routeId = routeId;
+    }
+
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
     }
 }
 

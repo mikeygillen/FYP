@@ -27,6 +27,8 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.ViewHolder> {
         this.mAllRuns = runList;
         mFilterRuns = (ArrayList<Run>) mAllRuns.clone();
 
+        Log.d(TAG, "RunAdapter: RunList = " + runList + ", mFilterList = " + mFilterRuns);
+
         this.mOnRunListener = onRunListener;
     }
 
@@ -43,8 +45,8 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.ViewHolder> {
             Run currentItem = mAllRuns.get(position);
 
             holder.duration.setText(currentItem.getDuration());
-            holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance() * 100.0) / 1000.0));
-            holder.pace.setText((int) currentItem.getPace());
+            holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance() / 1000)));
+            holder.pace.setText(String.valueOf(currentItem.getPace()));
             holder.route.setText(currentItem.getRouteId());
 
         }catch (NullPointerException e){

@@ -1,16 +1,7 @@
 package com.example.fyp.Activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,15 +21,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
+import com.example.fyp.Classes.Route;
 import com.example.fyp.Classes.Run;
 import com.example.fyp.Fragments.EditProfileFragment;
-import com.example.fyp.Helper.Helper;
 import com.example.fyp.Fragments.PairUsersFragment;
-import com.example.fyp.Interface.Interface;
-import com.example.fyp.R;
-import com.example.fyp.Classes.Route;
 import com.example.fyp.Fragments.RouteFragment;
 import com.example.fyp.Fragments.StatsFragment;
+import com.example.fyp.Helper.Helper;
+import com.example.fyp.Interface.Interface;
+import com.example.fyp.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -222,8 +221,8 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             }
 
             final double d = calculateDistance(locations.get(0), locations.get(locations.size() - 1));
-            final String t = Helper.secondToHHMMSS(elapsedTime());
-            final double p = Helper.calculatePace(elapsedTime(), calculateDistance(locations.get(0), locations.get(locations.size()-1)));
+            final String t = Helper.secondToHHMMSS(Helper.elapsedTime(startTime));
+            final double p = Helper.calculatePace(Helper.elapsedTime(startTime), d);
             Log.d(TAG, "endRunTracking: Pace - " + p);
             Log.d(TAG, "endRunTracking: Distance - " + d);
             Log.d(TAG, "endRunTracking: Duration - " + t);
@@ -237,31 +236,41 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             String routeKey =  newRoute.push().getKey();
             final Route route = new Route(d, LatLongs, userid, strDate);
 
-            newRoute.child(routeKey).setValue(route, new DatabaseReference.CompletionListener() {
-                public void onComplete(DatabaseError error, DatabaseReference ref) {
-                    Log.d("ssd", "onComplete: " + error);
-                }
-            });
+            try {
+                newRoute.child(routeKey).setValue(route, new DatabaseReference.CompletionListener() {
+                    public void onComplete(DatabaseError error, DatabaseReference ref) {
+                        Log.d("ssd", "onComplete: " + error);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Problem creating route.", Toast.LENGTH_LONG).show();
+            }
 
             String runKey = newRun.push().getKey();
-            final Run run = new Run(t, d, p, routeKey, userid);
+            final Run run = new Run(t, d, p, routeKey, userid, strDate);
 
-            newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
-                public void onComplete(DatabaseError error, DatabaseReference ref) {
-                    Log.d("ssd", "onComplete: " + error);
-                }
-            });
-            Log.d(TAG, "Route Tracking Finished");
+            try {
+                newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
+                    public void onComplete(DatabaseError error, DatabaseReference ref) {
+                        Log.d("ssd", "onComplete: " + error);
+                    }
+                });
+                Log.d(TAG, "Route Tracking Finished");
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Problem creating run.", Toast.LENGTH_LONG).show();
+            }
 
             try {
                 mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         try {
-                            double tDis = ((double) snapshot.child("Total Distance").getValue()) + d;
+                            double tDis = new Double(snapshot.child("Total Distance").getValue().toString()) + d;
                             mUserRef.child("Total Distance").setValue(tDis);
 
-                            int tRuns = ((Integer) snapshot.child("Total Runs").getValue()) + 1;
+                            int tRuns = new Integer(snapshot.child("Total Runs").getValue().toString()) + 1;
                             mUserRef.child("Total Runs").setValue(tRuns);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -282,10 +291,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private float calculateDistance(Location start, Location end){
         float distanceDiff = start.distanceTo(end); // Return meter unit
             return mDistanceCovered + distanceDiff;
-    }
-
-    public long elapsedTime() {
-        return (System.currentTimeMillis() - startTime) / 1000;
     }
 
     private boolean loadFragment(Fragment fragment) {

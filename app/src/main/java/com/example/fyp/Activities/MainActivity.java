@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,7 +31,12 @@ public class MainActivity extends AppCompatActivity{
     private Button _signupButton;
     private TextView _loginLink;
     private FirebaseAuth firebaseAuth;
-    private DatabaseReference newUser = FirebaseDatabase.getInstance().getReference("Users");
+    //private DatabaseReference newUser = FirebaseDatabase.getInstance().getReference("Users");
+
+    final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+    final DatabaseReference[] newUser = new DatabaseReference[1];
+    final FirebaseUser[] mCurrentUser = new FirebaseUser[1];
+    //mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,26 +103,18 @@ public class MainActivity extends AppCompatActivity{
                     Log.d(TAG, "createUserWithEmail:success");
                     Toast.makeText(MainActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
 
-                    try {
-                        Log.d(TAG, "onComplete: Set up User");
-                        String userKey =  newUser.push().getKey();
-                        Log.d(TAG, "onComplete: userKey - " + userKey);
-                        final User user = new User(name, email, 0.0, 0);
+                    mCurrentUser[0] = task.getResult().getUser();
+                    newUser[0] = mDatabase.child(mCurrentUser[0].getUid());
+                    newUser[0].child("Name").setValue(name);
 
-                        Log.d(TAG, "onComplete: user name = " + user.getName());
-                        Log.d(TAG, "onComplete: user email = " + user.getEmail());
-                        Log.d(TAG, "onComplete: user distance = " + user.getDistanceCovered());
-                        Log.d(TAG, "onComplete: user total runs = " + user.getTotalRuns());
+                    User user = new User(name, email, 0, 0);
+                    //newUser[0].setValue(user);
+                    newUser[0].child("Name").setValue(name);
+                    newUser[0].child("Email").setValue(email);
+                    newUser[0].child("Total Distance").setValue((double) 0.0);
+                    newUser[0].child("Total Runs").setValue((int) 0);
 
-                        newUser.child(newUser.push().getKey()).setValue(user, new DatabaseReference.CompletionListener() {
-                            public void onComplete(DatabaseError error, DatabaseReference ref) {
-                                Log.d("ssd", "onComplete: " + error);
-                            }
-                        });
-                    } catch (Exception e) {
-                        Log.d(TAG, "Set up Blank User Failed: " + e);
-                        e.printStackTrace();
-                    }
+
                     onSignupSuccess();
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure", task.getException());

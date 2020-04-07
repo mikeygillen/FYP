@@ -34,7 +34,7 @@
 
         <activity
             android:name=".Activities.MainActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,6 +47,12 @@
             android:theme="@style/AppTheme.Dark" />
         <activity android:name=".Activities.HomePageActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity
+            android:name=".Graphs.BarChartActivity"
+            android:theme="@style/AppTheme.Dark" />
+        <activity
+            android:name=".Graphs.PieChartActivity"
+            android:theme="@style/AppTheme.Dark" />
     </application>
 
 </manifest>

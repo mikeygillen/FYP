@@ -46,7 +46,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
 
             //String user = result.child("userId").getValue().toString();
 
-            holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance() * 100.0) / 100.0));
+            holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
             holder.user.setText(currentItem.getUserId());
             holder.created.setText(currentItem.getCreatedOn());
         }catch (NullPointerException e){
