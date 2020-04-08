@@ -20,17 +20,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fyp.Activities.HomePageActivity;
 import com.example.fyp.Adapters.RunAdapter;
 import com.example.fyp.Classes.Run;
-import com.example.fyp.Graphs.BarChartActivity;
+import com.example.fyp.Graphs.LineChartActivity;
 import com.example.fyp.Graphs.PieChartActivity;
 import com.example.fyp.R;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.data.BarEntry;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -61,7 +58,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     private String mParam1;
     private String mParam2;
     private Spinner filter;
-    private Button btnFilter, btnBarChart, btnPieChart;
+    private Button btnFilter, btnLineChart, btnPieChart;
     private TextView tDistanceView, aDistanceView, tRunsView;
 
     View v;
@@ -120,7 +117,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_stats, container, false);
         runList.clear();
-        String runKey =  mRunRef.push().getKey();
+       // String runKey =  mRunRef.push().getKey();
 
         tDistanceView = v.findViewById(R.id.text_total_distance);
         aDistanceView = v.findViewById(R.id.text_avg_distance);
@@ -134,46 +131,100 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         retrieveUserInfo();
         retrieveRuns();
 
-        BarChart barChart = (BarChart) v.findViewById(R.id.barchart);
-
-        btnBarChart = v.findViewById(R.id.btnBarChart);
+        btnLineChart = v.findViewById(R.id.btnLineChart);
         btnPieChart = v.findViewById(R.id.btnPieChart);
-        btnBarChart.setOnClickListener(new View.OnClickListener() {
+
+        btnLineChart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showUserDistances();
-                //startActivity(new Intent(getActivity(), BarChartActivity.class));
+                final String f;
+                if (filter != null && filter.getSelectedItem() != null) {
+                    f = (String) filter.getSelectedItem();
+                } else {
+                    f = "Null";
+                }
+
+                if (f.equals("Distances")){
+                    Intent intent = new Intent(getActivity(), LineChartActivity.class);
+                    intent.putExtra("user_distances", getDistances());
+                    startActivity(intent);
+                }else if (f.equals("Pace")){
+                    //barChartPace();
+                }else if (f.equals("Run Times")){
+                  //  barChartTimes();
+                }else if (f.equals("Days Ran")){
+                  //  barChartDays();
+                }
+                //showUserDistances();
             }
         });
         btnPieChart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getActivity(), PieChartActivity.class));
+                final String f;
+                if (filter != null && filter.getSelectedItem() != null) {
+                    f = (String) filter.getSelectedItem();
+                } else {
+                    f = "Null";
+                }
+
+                if (f.equals("Distances")){
+                    Intent intent = new Intent(getActivity(), PieChartActivity.class);
+                    intent.putExtra("user_distances", getDistances());
+                    startActivity(intent);
+                }else if (f.equals("Pace")){
+                    Intent intent = new Intent(getActivity(), PieChartActivity.class);
+                    intent.putExtra("user_pace", getPace());
+                    startActivity(intent);
+                }else if (f.equals("Run Times")){
+                    Intent intent = new Intent(getActivity(), PieChartActivity.class);
+                    intent.putExtra("user_times", getTime());
+                    startActivity(intent);
+                }else if (f.equals("Days Ran")){
+                    Intent intent = new Intent(getActivity(), PieChartActivity.class);
+                    intent.putExtra("user_days", getDays());
+                    startActivity(intent);
+                }
             }
         });
-
-        /*
-        initRecyclerView(runList);
-
-        btnFilter.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                filterRuns();
-            }
-        });*/
 
         return v;
     }
 
-    private void showUserDistances() {
-        ArrayList<BarEntry> userDistances = new ArrayList<>();
-
+    private ArrayList<String> getDays() {
+        ArrayList<String> userDays = new ArrayList<>();
         for (int i = 0; i<runList.size(); i++){
-            userDistances.add(new BarEntry((float) runList.get(i).getDistance(), i));
-            Log.d(TAG, "showUserDistances: Distance Logged = " + userDistances.get(i));
+            userDays.add(runList.get(i).getCreatedOn());
+            Log.d(TAG, "getUserDay: Day Logged = " + runList.get(i).getCreatedOn());
         }
-        Intent intent = new Intent(getActivity(), BarChartActivity.class);
-        intent.putExtra("user_distances", userDistances);
-        startActivity(intent);
+        return userDays;
+    }
+
+    private ArrayList<String> getTime() {
+        ArrayList<String> userTime = new ArrayList<>();
+        for (int i = 0; i<runList.size(); i++){
+            userTime.add(runList.get(i).getDuration());
+            Log.d(TAG, "getUserTime: Time Logged = " + runList.get(i).getDuration());
+        }
+        return userTime;
+    }
+
+    private ArrayList<Float> getPace() {
+        ArrayList<Float> userPace = new ArrayList<>();
+        for (int i = 0; i<runList.size(); i++){
+            userPace.add((float) runList.get(i).getPace());
+            Log.d(TAG, "getUserPace: Pace Logged = " + userPace.get(i));
+        }
+        return userPace;
+    }
+
+    private ArrayList<Float> getDistances() {
+        ArrayList<Float> userDistances = new ArrayList<>();
+        for (int i = 0; i<runList.size(); i++){
+            userDistances.add((float) runList.get(i).getDistance());
+            Log.d(TAG, "getUserDistances: Distance Logged = " + userDistances.get(i));
+        }
+        return userDistances;
     }
 
     private void retrieveUserInfo() {
@@ -203,7 +254,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     }
 
     public void retrieveRuns(){
-        mRunRef.addValueEventListener(new ValueEventListener() {
+        mRunRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot result : snapshot.getChildren()) {
@@ -212,14 +263,16 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                         double pace = (Double) result.child("pace").getValue();
                         double distance = (Double) result.child("distance").getValue();
                         String route = result.child("routeId").getValue().toString();
+                        String createdOn = result.child("createdOn").getValue().toString();
 
-                        Run run1 = new Run(duration, distance, pace, route);
+                        Run run1 = new Run(duration, distance, pace, route, createdOn);
                         runList.add(run1);
                     } catch (Exception e) {
                         Log.d(TAG, "onDataChange: FAILED" + e);
                     }
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 System.out.println("The StatsFragment failed: ");
@@ -274,14 +327,8 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         startActivity(intent);
     }
 
-    /*private void deleteRun(Run run) {
-        runList.remove(run);
-        mAdapter.notifyDataSetChanged();
 
-        //Delete from firebase here
-        mNoteRepository.deleteNoteTask(note);
-    }*/
-
+    /*
     ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -301,6 +348,8 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
             mListener.onFragmentInteraction(uri);
         }
     }
+
+     */
 
     @Override
     public void onAttach(Context context) {

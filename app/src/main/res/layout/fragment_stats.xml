@@ -114,19 +114,19 @@
                         android:layout_height="match_parent">
 
                         <Button
-                            android:id="@+id/btnBarChart"
+                            android:id="@+id/btnLineChart"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
-                            android:text="Bar Chart Demo" />
+                            android:text="Graph progress" />
 
                         <Button
                             android:id="@+id/btnPieChart"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/btnBarChart"
+                            android:layout_toRightOf="@+id/btnLineChart"
                             android:layout_margin="5dp"
-                            android:text="Pie Chart Demo" />
+                            android:text="See in Numbers" />
 
                     </RelativeLayout>
 

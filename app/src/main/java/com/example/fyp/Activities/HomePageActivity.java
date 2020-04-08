@@ -228,7 +228,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             Log.d(TAG, "endRunTracking: Duration - " + t);
 
             endTime = System.currentTimeMillis();
-            SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+            SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy");
             String strDate = formatter.format(endTime);
 
             Log.d(TAG, "String Date = " + strDate);

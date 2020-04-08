@@ -8,19 +8,11 @@
         <item>Undecided</item>
     </string-array>
 
-    <string-array name="leaderboard_filter">
-        <item>Furthest Distance</item>
-        <item>Shortest Distance</item>
-        <item>Fastest</item>
-        <item>Slowest</item>
-    </string-array>
-
     <string-array name="personal_filter">
-        <item>General</item>
-        <item>Furthest Distance</item>
-        <item>Shortest Distance</item>
-        <item>Fastest</item>
-        <item>Slowest</item>
+        <item>Distances</item>
+        <item>Pace</item>
+        <item>Run Times</item>
+        <item>Days Ran</item>
     </string-array>
 
     <string name="title_home">Home</string>

@@ -46,7 +46,7 @@ public class Helper {
     }
 
     public static double calculatePace(long seconds, double distance) {
-        return (distance/seconds) * 3.6; // 1000 feet -> 304.8
+        return (16.666666667 / (distance/seconds)); // Should return min/Km
     }
 
     public static long elapsedTime(long startTime) {

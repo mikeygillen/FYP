@@ -48,7 +48,7 @@
         <activity android:name=".Activities.HomePageActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
-            android:name=".Graphs.BarChartActivity"
+            android:name=".Graphs.LineChartActivity"
             android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".Graphs.PieChartActivity"
