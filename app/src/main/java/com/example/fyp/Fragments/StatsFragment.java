@@ -59,13 +59,12 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     private String mParam2;
     private Spinner filter;
     private Button btnFilter, btnLineChart, btnPieChart;
-    private TextView tDistanceView, aDistanceView, tRunsView;
+    private TextView tDistanceView, aDistanceView, tRunsView, fRun, lRun;
 
     View v;
 
     private Run mReadRuns = new Run();
 
-    private ArrayList<Run> runList = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter<RunAdapter.ViewHolder> mRunAdapter;
@@ -75,8 +74,10 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     private FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
     private String currentUserId = mUser.getUid();
     private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUserId);
+    private ArrayList<Run> runList = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
+    private double furthest = 0;
 
 
     public StatsFragment() {
@@ -117,12 +118,14 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_stats, container, false);
         runList.clear();
-       // String runKey =  mRunRef.push().getKey();
+        // String runKey =  mRunRef.push().getKey();
 
         tDistanceView = v.findViewById(R.id.text_total_distance);
         aDistanceView = v.findViewById(R.id.text_avg_distance);
         tRunsView = v.findViewById(R.id.text_total_runs);
-        btnFilter = (Button) v.findViewById(R.id.btn_update);
+        fRun = v.findViewById(R.id.text_furthest_run);
+        //fRun = v.findViewById(R.id.text_longest_run);
+        //btnFilter = (Button) v.findViewById(R.id.btn_update);
         filter = (Spinner) v.findViewById(R.id.text_filter);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.personal_filter, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -144,16 +147,17 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                     f = "Null";
                 }
 
-                if (f.equals("Distances")){
+                if (f.equals("Distances")) {
                     Intent intent = new Intent(getActivity(), LineChartActivity.class);
                     intent.putExtra("user_distances", getDistances());
+                    intent.putExtra("user_days", getDays());
                     startActivity(intent);
-                }else if (f.equals("Pace")){
+                } else if (f.equals("Pace")) {
                     //barChartPace();
-                }else if (f.equals("Run Times")){
-                  //  barChartTimes();
-                }else if (f.equals("Days Ran")){
-                  //  barChartDays();
+                } else if (f.equals("Run Times")) {
+                    //  barChartTimes();
+                } else if (f.equals("Days Ran")) {
+                    //  barChartDays();
                 }
                 //showUserDistances();
             }
@@ -168,19 +172,19 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                     f = "Null";
                 }
 
-                if (f.equals("Distances")){
+                if (f.equals("Distances")) {
                     Intent intent = new Intent(getActivity(), PieChartActivity.class);
                     intent.putExtra("user_distances", getDistances());
                     startActivity(intent);
-                }else if (f.equals("Pace")){
+                } else if (f.equals("Pace")) {
                     Intent intent = new Intent(getActivity(), PieChartActivity.class);
                     intent.putExtra("user_pace", getPace());
                     startActivity(intent);
-                }else if (f.equals("Run Times")){
+                } else if (f.equals("Run Times")) {
                     Intent intent = new Intent(getActivity(), PieChartActivity.class);
                     intent.putExtra("user_times", getTime());
                     startActivity(intent);
-                }else if (f.equals("Days Ran")){
+                } else if (f.equals("Days Ran")) {
                     Intent intent = new Intent(getActivity(), PieChartActivity.class);
                     intent.putExtra("user_days", getDays());
                     startActivity(intent);
@@ -188,8 +192,21 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
             }
         });
 
+        fRun.setText(String.valueOf(getFurthest()));
+
         return v;
     }
+
+    private double getFurthest(){
+        for (int i = 0; i < runList.size(); i++) {
+            if (furthest < runList.get(i).getDistance()) {
+                furthest = runList.get(i).getDistance();
+                Log.d(TAG, "getFurthest: furthest = " + furthest);
+            }
+        }
+        return furthest;
+    }
+
 
     private ArrayList<String> getDays() {
         ArrayList<String> userDays = new ArrayList<>();
@@ -259,14 +276,18 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot result : snapshot.getChildren()) {
                     try {
-                        String duration = result.child("duration").getValue().toString();
-                        double pace = (Double) result.child("pace").getValue();
-                        double distance = (Double) result.child("distance").getValue();
-                        String route = result.child("routeId").getValue().toString();
-                        String createdOn = result.child("createdOn").getValue().toString();
+                        if(result.child("userId").getValue().toString().equalsIgnoreCase(currentUserId)) {
+                            String duration = result.child("duration").getValue().toString();
+                            double pace = new Double(result.child("pace").getValue().toString());
+                            double distance = new Double(result.child("distance").getValue().toString());
+                            String userId = result.child("userId").getValue().toString();
+                            String createdOn = result.child("createdOn").getValue().toString();
 
-                        Run run1 = new Run(duration, distance, pace, route, createdOn);
-                        runList.add(run1);
+                            Run run1 = new Run(duration, distance, pace, userId, createdOn);
+                            runList.add(run1);
+
+                            Log.d(TAG, "onDataChange: run1 = " + run1.getCreatedOn());
+                        }
                     } catch (Exception e) {
                         Log.d(TAG, "onDataChange: FAILED" + e);
                     }

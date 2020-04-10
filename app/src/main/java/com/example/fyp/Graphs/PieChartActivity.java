@@ -38,6 +38,7 @@ public class PieChartActivity extends AppCompatActivity {
          }
 
         pds.setColors(ColorTemplate.COLORFUL_COLORS);
+         pieChart.setNoDataText("");
 
         PieData pd = new PieData(pds);
         pieChart.setData(pd);

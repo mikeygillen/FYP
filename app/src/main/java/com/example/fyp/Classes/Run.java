@@ -17,20 +17,29 @@ public class Run {
 
     }
 
-    public Run(String duration, double distance, double pace, String route, String createdOn) {
+    /*public Run(String duration, double distance, double pace, String route, String createdOn) {
         this.pace = pace;
         this.distance = distance;
         this.duration = duration;
         this.routeId = routeId;
         this.createdOn = createdOn;
-    }
+    }*/
 
-    public Run(String duration, double distance, double pace, String routeId, String userid, String createdOn) {
+    public Run(String duration, double distance, double pace, String routeId, String userId, String createdOn) {
         this.duration = duration;
         this.distance = distance;
         this.pace = pace;
         this.routeId = routeId;
-        this.userId = userid;
+        this.userId = userId;
+        this.createdOn = createdOn;
+    }
+
+
+    public Run(String duration, double distance, double pace, String userId, String createdOn) {
+        this.pace = pace;
+        this.distance = distance;
+        this.duration = duration;
+        this.userId = userId;
         this.createdOn = createdOn;
     }
 
