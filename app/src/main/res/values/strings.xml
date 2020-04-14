@@ -15,6 +15,12 @@
         <item>Days Ran</item>
     </string-array>
 
+    <string-array name="progression_filter">
+        <item>Distance</item>
+        <item>Pace</item>
+        <item>Run Times</item>
+    </string-array>
+
     <string name="title_home">Home</string>
     <string name="title_profile">Profile</string>
     <string name="title_friend_finder">Finder</string>

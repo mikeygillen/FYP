@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fyp.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -28,7 +29,7 @@ public class PieChartActivity extends AppCompatActivity {
         PieDataSet pds = null;
          Intent intent = getIntent();
          if (intent.hasExtra("user_distances")){
-             pds = new PieDataSet(sortDistances(), "Distances Covered");
+             pds = new PieDataSet(sortDistances(), "");
          }else if (intent.hasExtra("user_pace")){
              pds = new PieDataSet(sortPace(), "Pace of Runs");
          }else if (intent.hasExtra("user_times")){
@@ -40,11 +41,22 @@ public class PieChartActivity extends AppCompatActivity {
         pds.setColors(ColorTemplate.COLORFUL_COLORS);
          pieChart.setNoDataText("");
 
+
+
+        //LEGEND SPECIFICATIONS
+        Legend legend = pieChart.getLegend();
+        legend.setEnabled(true);
+        legend.setTextSize(18);
+        legend.setFormToTextSpace(1);
+        legend.setStackSpace(10);
+        legend.setFormSize(10);
+        legend.setEnabled(true);
+
         PieData pd = new PieData(pds);
         pieChart.setData(pd);
-        pds.setSliceSpace(2f);
+        pds.setSliceSpace(3f);
         pds.setValueTextColor(Color.WHITE);
-        pds.setValueTextSize(12f);
+        pds.setValueTextSize(15f);
         pieChart.setData(pd);
         pieChart.animateXY(5000, 5000);
     }
@@ -54,7 +66,7 @@ public class PieChartActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<? extends Float> userDistances = intent.getParcelableArrayListExtra("user_distances");
         int u=0, f=0, t=0, o=0;
-        String under="Under 5k", five="5k - 10k", ten="10k - 20k", over="Over 20k";
+        String under="<5k", five="5k - 10k", ten="10k - 20k", over="20k+";
         for (int i = 0; i<userDistances.size(); i++){
             if (userDistances.get(i) < 500){
                 u = u + 1;
@@ -82,7 +94,7 @@ public class PieChartActivity extends AppCompatActivity {
         Log.d(TAG, "sortPace: userPace = " + userPace);
 
         int u=0, f=0, t=0, o=0;
-        String under="Sub 5 min/Km", five="5-7 min/Km", ten="7-10 min/Km", over="Over 10 min/Km";
+        String under="< 5min/Km", five="5-7", ten="7-10", over="10+";
         for (int i = 0; i<userPace.size(); i++){
             if (userPace.get(i) < 5){
                 u = u + 1;
@@ -108,7 +120,7 @@ public class PieChartActivity extends AppCompatActivity {
         ArrayList<? extends String> userTimes = intent.getParcelableArrayListExtra("user_times");
 
         int u=0, f=0, t=0, o=0;
-        String under="Under 15min", ten="15-25min", twenty="25-45min", over="Over 45min";
+        String under="< 15min", ten="15-25min", twenty="25-45min", over="45min+";
 
         for (int i = 0; i<userTimes.size(); i++){
             String segments[] = userTimes.get(i).split(":");

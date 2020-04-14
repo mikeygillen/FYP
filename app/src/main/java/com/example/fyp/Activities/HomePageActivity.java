@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -77,6 +79,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -257,6 +260,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                     }
                 });
                 Log.d(TAG, "Route Tracking Finished");
+                Toast.makeText(this, "Workout complete! /n Distance Covered = " + d + "Km", Toast.LENGTH_LONG).show();
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Problem creating run.", Toast.LENGTH_LONG).show();
@@ -300,6 +304,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         }
         return false;
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
@@ -474,7 +479,11 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
         if (checkPermissions()){
             if (routePoints!=null){
-                mapRoute(routePoints);
+                try {
+                    mapRoute(routePoints);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }else {
                 getLastLocation();
                 mMap.setMyLocationEnabled(true);
@@ -508,13 +517,25 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         }
     }
 
-    public static void mapRoute(ArrayList<LatLng> routePoints) {
+    public void mapRoute(ArrayList<LatLng> routePoints) throws IOException {
         Log.d(TAG, "mapRoute beginning.... ");
         mMap.clear();
 
+        LatLng start = routePoints.get(0);
+        LatLng end = routePoints.get(routePoints.size()-1);
+
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+        addresses = geocoder.getFromLocation(start.latitude, start.longitude, 1);
+        String startAddress = addresses.get(0).getAddressLine(0);
+
+        addresses = geocoder.getFromLocation(end.latitude, end.longitude, 1);
+        String endAddress = addresses.get(0).getAddressLine(0);
+
         MarkerOptions startPoint = new MarkerOptions();
         startPoint.position(routePoints.get(0));
-        startPoint.title("Start Point");
+        startPoint.title(startAddress);
         startPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mMap.addMarker(startPoint);
 
@@ -522,7 +543,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
         MarkerOptions endPoint = new MarkerOptions();
         endPoint.position(routePoints.get(routePoints.size() - 1));
-        endPoint.title("End Point");
+        endPoint.title(endAddress);
         endPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mMap.addMarker(endPoint);
 

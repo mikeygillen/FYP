@@ -11,6 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fyp.Classes.Route;
 import com.example.fyp.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -38,20 +43,29 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        try{
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
             Route currentItem = mAllRoutes.get(position);
-            //DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentItem.getUserId());
-            //holder.user.setText(mUserRef.child("Gender").getRoot());
+            DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentItem.getUserId());
+            mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    try {
+                        String name = snapshot.child("Name").getValue().toString();
+                        Log.d(TAG, "onDataChange: Name = " + name);
+                        holder.user.setText(name);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        String name = "Anonymous User";
+                        holder.user.setText(name);
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            //String user = result.child("userId").getValue().toString();
-
+                }
+            });
             holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
-            holder.user.setText(currentItem.getUserId());
             holder.created.setText(currentItem.getCreatedOn());
-        }catch (NullPointerException e){
-            Log.e(TAG, "onBindViewHolder: Null Pointer: " + e.getMessage() );
-        }
     }
 
     @Override

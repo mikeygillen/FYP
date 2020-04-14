@@ -57,14 +57,13 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private Spinner filter;
+    private Spinner filter1, filter2;
     private Button btnFilter, btnLineChart, btnPieChart;
     private TextView tDistanceView, aDistanceView, tRunsView, fRun, lRun;
 
     View v;
 
     private Run mReadRuns = new Run();
-
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter<RunAdapter.ViewHolder> mRunAdapter;
@@ -124,12 +123,16 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         aDistanceView = v.findViewById(R.id.text_avg_distance);
         tRunsView = v.findViewById(R.id.text_total_runs);
         fRun = v.findViewById(R.id.text_furthest_run);
-        //fRun = v.findViewById(R.id.text_longest_run);
-        //btnFilter = (Button) v.findViewById(R.id.btn_update);
-        filter = (Spinner) v.findViewById(R.id.text_filter);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.personal_filter, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        filter.setAdapter(adapter);
+
+        filter1 = (Spinner) v.findViewById(R.id.text_filter);
+        ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity(), R.array.personal_filter, android.R.layout.simple_spinner_item);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filter1.setAdapter(adapter1);
+
+        filter2 = (Spinner) v.findViewById(R.id.progression_filter);
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.progression_filter, android.R.layout.simple_spinner_item);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        filter2.setAdapter(adapter2);
 
         retrieveUserInfo();
         retrieveRuns();
@@ -137,37 +140,12 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         btnLineChart = v.findViewById(R.id.btnLineChart);
         btnPieChart = v.findViewById(R.id.btnPieChart);
 
-        btnLineChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String f;
-                if (filter != null && filter.getSelectedItem() != null) {
-                    f = (String) filter.getSelectedItem();
-                } else {
-                    f = "Null";
-                }
-
-                if (f.equals("Distances")) {
-                    Intent intent = new Intent(getActivity(), LineChartActivity.class);
-                    intent.putExtra("user_distances", getDistances());
-                    intent.putExtra("user_days", getDays());
-                    startActivity(intent);
-                } else if (f.equals("Pace")) {
-                    //barChartPace();
-                } else if (f.equals("Run Times")) {
-                    //  barChartTimes();
-                } else if (f.equals("Days Ran")) {
-                    //  barChartDays();
-                }
-                //showUserDistances();
-            }
-        });
         btnPieChart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final String f;
-                if (filter != null && filter.getSelectedItem() != null) {
-                    f = (String) filter.getSelectedItem();
+                if (filter1 != null && filter1.getSelectedItem() != null) {
+                    f = (String) filter1.getSelectedItem();
                 } else {
                     f = "Null";
                 }
@@ -192,19 +170,33 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
             }
         });
 
-        fRun.setText(String.valueOf(getFurthest()));
+        btnLineChart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String f;
+                if (filter2 != null && filter2.getSelectedItem() != null) {
+                    f = (String) filter2.getSelectedItem();
+                    Log.d(TAG, "onClick: LineChart = " + f);
+                } else {
+                    f = "Null";
+                }
+                if (f.equals("Distances")) {
+                    Intent intent = new Intent(getActivity(), LineChartActivity.class);
+                    intent.putExtra("user_distances", getDistances());
+                    intent.putExtra("user_days", getDays());
+                    startActivity(intent);
+                } else if (f.equals("Pace")) {
+                    //barChartPace();
+                } else if (f.equals("Run Times")) {
+                    //  barChartTimes();
+                } else if (f.equals("Days Ran")) {
+                    //  barChartDays();
+                }
+
+            }
+        });
 
         return v;
-    }
-
-    private double getFurthest(){
-        for (int i = 0; i < runList.size(); i++) {
-            if (furthest < runList.get(i).getDistance()) {
-                furthest = runList.get(i).getDistance();
-                Log.d(TAG, "getFurthest: furthest = " + furthest);
-            }
-        }
-        return furthest;
     }
 
 

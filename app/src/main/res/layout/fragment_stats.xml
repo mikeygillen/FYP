@@ -35,7 +35,7 @@
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="20dp"
                 android:background="#fff"
-                android:elevation="4dp"
+                android:elevation="7dp"
                 android:orientation="vertical"
                 android:padding="20dp">
 
@@ -47,7 +47,7 @@
 
                     <TextView
                         android:labelFor="@id/text_filter"
-                        android:text="Filter"
+                        android:text="Show totals for"
                         android:fontFamily="sans-serif-light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -56,11 +56,16 @@
                         android:id="@+id/text_filter"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content" />
+                    <Button
+                        android:id="@+id/btnPieChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Display" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="5dp"
-                        android:background="@android:color/darker_gray"/>
+                        android:background="@android:color/white"/>
 
                     <TextView
                         android:labelFor="@id/text_total_distance"
@@ -112,26 +117,24 @@
                         android:drawablePadding="5dp"
                         android:layout_marginBottom="5dp" />
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:labelFor="@id/text_filter"
+                            android:text="Show your progression over time"
+                            android:fontFamily="sans-serif-light"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <Spinner
+                            android:id="@+id/progression_filter"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content" />
 
                         <Button
                             android:id="@+id/btnLineChart"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
                             android:text="Graph progress" />
-
-                        <Button
-                            android:id="@+id/btnPieChart"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/btnLineChart"
-                            android:layout_margin="5dp"
-                            android:text="See in Numbers" />
-
-                    </RelativeLayout>
 
                 </LinearLayout>
 

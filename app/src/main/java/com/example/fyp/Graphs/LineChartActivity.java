@@ -13,6 +13,8 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -24,7 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,6 +88,23 @@ public class LineChartActivity extends AppCompatActivity {
         legend.setFormSize(5);
         legend.setEnabled(true);
 
+        //XAxis xAxis = graph.getXAxis();
+        YAxis yAxisLeft = graph.getAxisLeft();
+        YAxis yAxisRight = graph.getAxisRight();
+       // xAxis.setValueFormatter(new MyAxisValueFormatter());
+       // xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+       // yAxisRight.setEnabled(false);
+
+        Intent i = getIntent();
+        ArrayList<? extends String> userTimes = i.getParcelableArrayListExtra("user_days");
+
+        String[] values = new String[]{
+                String.valueOf(userTimes)
+        };
+
+        XAxis xAxis = graph.getXAxis();
+        xAxis.setValueFormatter(new MyXAxisValueFormatter(values));
+
         //SET DESCRIPTION FOR GRAPH
         Description description = new Description();
         description.setText("Dates");
@@ -98,7 +116,7 @@ public class LineChartActivity extends AppCompatActivity {
         graph.animateY(1000);
         graph.invalidate();
 
-        /*
+/*
         YAxis leftAxis = graph.getAxisLeft();
         //leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         //leftAxis.setAxisMinimum(0f);
@@ -119,7 +137,7 @@ public class LineChartActivity extends AppCompatActivity {
         //xAxis.setGranularityEnabled(true);
         xAxis.setValueFormatter(new DateAxisValueFormatter(null));
 
-         */
+ */
     }
 
     private List<Entry> sortDistances() {
@@ -128,6 +146,8 @@ public class LineChartActivity extends AppCompatActivity {
             Intent intent = getIntent();
             ArrayList<? extends Float> userDistances = intent.getParcelableArrayListExtra("user_distances");
             ArrayList<? extends String> userTimes = intent.getParcelableArrayListExtra("user_days");
+        Log.d(TAG, "sortDistances: userDistances = " + userDistances);
+        Log.d(TAG, "sortDistances: userTimes = " + userTimes);
 
             for(int i=0;i<userDistances.size();i++) {
                 long startDate = 0;
@@ -149,62 +169,39 @@ public class LineChartActivity extends AppCompatActivity {
             return lineEntries;
         }
 
-    class DateAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {
+
+    public class MyXAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {
+
         private String[] mValues;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
-        public DateAxisValueFormatter(String[] values) {
-            this.mValues = values; }
+        public MyXAxisValueFormatter(String[] values) {
+            this.mValues = values;
+        }
 
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            //creating Date from millisecond
-            Date date = new Date((long) value);
-            Log.d(TAG, "getFormattedValue: Date =" + date);
-
-            //printing value of Date
-            System.out.println("current Date: " + date);
-
-            DateFormat df = new SimpleDateFormat("dd MMM");
-            String d = df.format(date);
-
-            //formatted value of current Date
-            return d;
-
+            // "value" represents the position of the label on the axis (x or y)
+            return mValues[(int) value];
         }
+
+        /** this is only needed if numbers are returned, else return 0 */
+        //@Override
+        //public int getDecimalDigits() { return 0; }
     }
 
-   /* private class MyAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {
-        @Override
-        public String getFormattedValue(float dateInMilliseconds, AxisBase axis) {
-            Log.d(TAG, "getFormattedValue: Starting = " + dateInMilliseconds);
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd MMM");
-                Log.d(TAG, "getFormattedValue: DATEINMILLISECONDS = " + dateInMilliseconds);
-                Date date=new Date((long) dateInMilliseconds);
-                String dateText = sdf.format(date);
-                return dateText;
 
-                //return sdf.format(new Date(Long.parseLong(String.valueOf(dateInMilliseconds))));
-            } catch (Exception e) {
-                return String.valueOf(dateInMilliseconds);
+        /*private class MyValueFormatter implements IValueFormatter{
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return value + "";
             }
         }
-    }
-   /*public class MyXAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {
+        private class MyAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter{
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return "Day " + value;
+            }
+        }
 
-       @Override
-       public String getXValue(String dateInMillisecons, int index, ViewPortHandler viewPortHandler) {
-           try {
-               SimpleDateFormat sdf = new SimpleDateFormat("dd MMM");
-
-               return sdf.format(new Date(Long.parseLong(dateInMillisecons)));
-           } catch (Exception e) {
-               return dateInMillisecons;
-           }
-
-       }
-   }*/
-
+         */
 }
