@@ -59,12 +59,13 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
                         holder.user.setText(name);
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
             });
-            holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
+            holder.dist.setText(String.valueOf(Math.round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
             holder.created.setText(currentItem.getCreatedOn());
     }
 
@@ -98,36 +99,4 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
     public interface OnRouteListener{
         void onRouteClick(int position);
     }
-
-    /*@Override
-    public int getItemCount() {
-        return mFilterRoutes.size();
-    }*/
-
-    /*public void noFilter() {
-        mFilterRoutes = mAllRoutes;
-        notifyDataSetChanged();
-    }
-
-    private void filterCurrent(String userId) {
-        mFilterRoutes = new ArrayList<>();
-        for(Route route : mAllRoutes) {
-            if(route.getUserId().equals(userId)) {
-                mFilterRoutes.add(route);
-            }
-        }
-        notifyDataSetChanged();
-    }
-
-    private void filterOther(String userId) {
-        mFilterRoutes = new ArrayList<>();
-        for(Route route : mAllRoutes) {
-            if(!userId.equals(route.getUserId())) {
-                mFilterRoutes.add(route);
-            }
-        }
-        notifyDataSetChanged();
-    }//*/
-
-
 }

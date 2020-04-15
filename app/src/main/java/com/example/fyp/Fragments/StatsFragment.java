@@ -58,8 +58,9 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     private String mParam1;
     private String mParam2;
     private Spinner filter1, filter2;
-    private Button btnFilter, btnLineChart, btnPieChart;
-    private TextView tDistanceView, aDistanceView, tRunsView, fRun, lRun;
+    private Button btnLineChart, btnPieChart;
+    private TextView tDistanceView, aDistanceView, tRunsView, fRun, sRun;
+    private String furthest, shortest;
 
     View v;
 
@@ -76,7 +77,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     private ArrayList<Run> runList = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
-    private double furthest = 0;
+    private double f=0, s=1000;
 
 
     public StatsFragment() {
@@ -123,6 +124,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         aDistanceView = v.findViewById(R.id.text_avg_distance);
         tRunsView = v.findViewById(R.id.text_total_runs);
         fRun = v.findViewById(R.id.text_furthest_run);
+        sRun = v.findViewById(R.id.text_shortest_run);
 
         filter1 = (Spinner) v.findViewById(R.id.text_filter);
         ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity(), R.array.personal_filter, android.R.layout.simple_spinner_item);
@@ -136,6 +138,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
 
         retrieveUserInfo();
         retrieveRuns();
+        setFurthestShortest();
 
         btnLineChart = v.findViewById(R.id.btnLineChart);
         btnPieChart = v.findViewById(R.id.btnPieChart);
@@ -199,6 +202,21 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         return v;
     }
 
+    private void setFurthestShortest() {
+        double f=0,s=0;
+        for (int i=0;i<runList.size();i++){
+            if(f<runList.get(i).getDistance()){
+                f = runList.get(i).getDistance();
+            }else if(s>runList.get(i).getDistance()){
+                s = runList.get(i).getDistance();
+            }
+        }
+        furthest = String.valueOf(f);
+        shortest = String.valueOf(s);
+        fRun.setText(furthest);
+        sRun.setText(shortest);
+    }
+
 
     private ArrayList<String> getDays() {
         ArrayList<String> userDays = new ArrayList<>();
@@ -243,11 +261,11 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                 try {
                     double dis = new Double(Math. round(Float.parseFloat(snapshot.child("Total Distance").getValue().toString())));
                     int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
-                    String aDistance = String.valueOf(dis/runs);
+                    double aDistance = Math. round(dis/runs);
 
-                    tDistanceView.setText(String.valueOf(dis) + "Km");
+                    tDistanceView.setText(String.valueOf(dis) + " Km");
                     tRunsView.setText(snapshot.child("Total Runs").getValue().toString() + " Workouts");
-                    aDistanceView.setText(aDistance);
+                    aDistanceView.setText(aDistance + " Km per Run");
 
 
                 } catch (Exception e) {
@@ -272,6 +290,11 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                             String duration = result.child("duration").getValue().toString();
                             double pace = new Double(result.child("pace").getValue().toString());
                             double distance = new Double(result.child("distance").getValue().toString());
+                            if(f<distance){
+                                f = distance;
+                            }else if(s>distance){
+                                s = distance;
+                            }
                             String userId = result.child("userId").getValue().toString();
                             String createdOn = result.child("createdOn").getValue().toString();
 
@@ -284,6 +307,8 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                         Log.d(TAG, "onDataChange: FAILED" + e);
                     }
                 }
+                fRun.setText(Math.round(f) + "Km");
+                sRun.setText(Math.round(s) + "Km");
             }
 
             @Override

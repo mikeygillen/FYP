@@ -146,8 +146,8 @@ public class LineChartActivity extends AppCompatActivity {
             Intent intent = getIntent();
             ArrayList<? extends Float> userDistances = intent.getParcelableArrayListExtra("user_distances");
             ArrayList<? extends String> userTimes = intent.getParcelableArrayListExtra("user_days");
-        Log.d(TAG, "sortDistances: userDistances = " + userDistances);
-        Log.d(TAG, "sortDistances: userTimes = " + userTimes);
+            Log.d(TAG, "sortDistances: userDistances = " + userDistances);
+            Log.d(TAG, "sortDistances: userTimes = " + userTimes);
 
             for(int i=0;i<userDistances.size();i++) {
                 long startDate = 0;

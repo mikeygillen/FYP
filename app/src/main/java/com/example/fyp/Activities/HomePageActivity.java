@@ -475,7 +475,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
         Intent i = getIntent();
         ArrayList<LatLng> routePoints = i.getParcelableArrayListExtra("route_points");
-        Log.d(TAG, "onMapReady: INTENT RECEIVED - " + routePoints);
 
         if (checkPermissions()){
             if (routePoints!=null){
@@ -519,7 +518,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
     public void mapRoute(ArrayList<LatLng> routePoints) throws IOException {
         Log.d(TAG, "mapRoute beginning.... ");
-        mMap.clear();
 
         LatLng start = routePoints.get(0);
         LatLng end = routePoints.get(routePoints.size()-1);
@@ -613,6 +611,8 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+
+        startActivity(new Intent(this, HomePageActivity.class));
     }
 
     @Override

@@ -46,28 +46,6 @@
                     android:paddingTop="20dp">
 
                     <TextView
-                        android:labelFor="@id/text_filter"
-                        android:text="Show totals for"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                    <Spinner
-                        android:id="@+id/text_filter"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" />
-                    <Button
-                        android:id="@+id/btnPieChart"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Display" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="5dp"
-                        android:background="@android:color/white"/>
-
-                    <TextView
                         android:labelFor="@id/text_total_distance"
                         android:text="Total Distance Ran"
                         android:layout_width="wrap_content"
@@ -93,7 +71,7 @@
 
                     <TextView
                         android:labelFor="@id/text_total_runs"
-                        android:text="Number of Runs"
+                        android:text="Total number recorded"
                         android:fontFamily="sans-serif-light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
@@ -117,24 +95,58 @@
                         android:drawablePadding="5dp"
                         android:layout_marginBottom="5dp" />
 
+                    <TextView
+                        android:labelFor="@id/text_shortest_run"
+                        android:text="Shortest Run"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/text_shortest_run"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="5dp"
+                        android:layout_marginBottom="5dp" />
 
-                        <TextView
-                            android:labelFor="@id/text_filter"
-                            android:text="Show your progression over time"
-                            android:fontFamily="sans-serif-light"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="5dp"
+                        android:background="@android:color/white"/>
 
-                        <Spinner
-                            android:id="@+id/progression_filter"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content" />
+                    <TextView
+                        android:labelFor="@id/text_filter"
+                        android:text="Show totals for"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
-                        <Button
-                            android:id="@+id/btnLineChart"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Graph progress" />
+                    <Spinner
+                        android:id="@+id/text_filter"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+                    <Button
+                        android:id="@+id/btnPieChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Display" />
+
+                    <TextView
+                        android:labelFor="@id/progression_filter"
+                        android:text="Show your progression over time"
+                        android:fontFamily="sans-serif-light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <Spinner
+                        android:id="@+id/progression_filter"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:id="@+id/btnLineChart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Graph progress" />
 
                 </LinearLayout>
 

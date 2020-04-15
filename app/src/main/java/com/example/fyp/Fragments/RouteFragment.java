@@ -227,14 +227,6 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
         startActivity(intent);
     }
 
-    /*private void deleteRoute(Route route) {
-        routeList.remove(route);
-        mAdapter.notifyDataSetChanged();
-
-        //Delete from firebase here
-        mNoteRepository.deleteNoteTask(note);
-    }*/
-
     ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
         @Override
         public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -243,7 +235,7 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
 
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            Log.e(TAG, "onSwiped swiped to delete");
+            Log.e(TAG, "onSwiped swiped to view");
             //deleteRoute(routeList.get(viewHolder.getAdapterPosition()));
         }
     };
