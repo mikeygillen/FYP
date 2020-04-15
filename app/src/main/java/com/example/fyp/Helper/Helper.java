@@ -65,15 +65,14 @@ public class Helper {
 
 
     public static String seekbarPercentageConverter(int progress) {
-        int percent = progress - 100;
-        if (50 < percent) {
-            percent = percent/2;
+        if(100 < progress) {
+            int percent = (progress-100)/2;
             return "Partner averages " + percent + "% more in this category";
-        } else if (50 > percent) {
-            percent = percent/2;
-            return "Partner averages " + percent + "% less in this category";
-        } else {
+        } else if(progress == 100) {
             return "Partner will run Similar times ";
+        } else{
+            int percent = (progress-100)/2;
+            return "Partner averages " + percent + "% less in this category";
         }
     }
 }

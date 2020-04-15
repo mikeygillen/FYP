@@ -1,14 +1,9 @@
 package com.example.fyp.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +12,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.example.fyp.Activities.MatchedUserActivity;
 import com.example.fyp.Helper.Helper;
 import com.example.fyp.R;
 
@@ -89,7 +90,7 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
         v = inflater.inflate(R.layout.fragment_pair_users, container, false);
 
         btnSearch = (Button) v.findViewById(R.id.btn_search_user);
-        rg = (RadioGroup) v.findViewById(R.id.TimePreferred);
+        rg = (RadioGroup) v.findViewById(R.id.RadioGroup);
 
         sDistance = (SeekBar) v.findViewById(R.id.SeekBarDistance);
         sDistance.setOnSeekBarChangeListener(this);
@@ -116,11 +117,9 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 p = (TextView) v.findViewById(R.id.PaceSet);
                 p.setText(Helper.seekbarPercentageConverter(sPace.getProgress()));
-
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
@@ -141,13 +140,35 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
     private void SearchUser() {
         btnSearch.setEnabled(false);
 
-        int selectedId = rg.getCheckedRadioButtonId();
-        rb = (RadioButton) v.findViewById(selectedId);
+        try {
+            int selectedId = rg.getCheckedRadioButtonId();
+            rb = (RadioButton) v.findViewById(selectedId);
 
-        int seekDistanceValue = sDistance.getProgress();
-        int seekPaceValue = sPace.getProgress();
+            int seekDistanceValue = sDistance.getProgress();
+            int seekPaceValue = sPace.getProgress();
 
-        Log.d(TAG, "Distance: " + seekDistanceValue + " - Pace: " + seekPaceValue + " - Time: " + rb.getText());
+            if (sDistance==null){
+                seekDistanceValue = 100;
+            }else if (sPace==null){
+                seekPaceValue = 100;
+            }
+            Toast.makeText(getActivity(), "dis" + seekDistanceValue  + " - Pace: " + seekPaceValue + " - Preference: " + rb.getText(), Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
+            intent.putExtra("distance_value", String.valueOf(seekDistanceValue));
+            intent.putExtra("pace_value", String.valueOf(seekPaceValue));
+            intent.putExtra("preferred_value", rb.getText());
+            startActivity(intent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getActivity(), "dis" + 100  + " - Pace: " + 100 + " - Preference: " + "Both", Toast.LENGTH_LONG).show();Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
+            intent.putExtra("distance_value", "100");
+            intent.putExtra("pace_value", "100");
+            intent.putExtra("preferred_value", "Both");
+            startActivity(intent);
+
+        }
 
         btnSearch.setEnabled(true);
     }

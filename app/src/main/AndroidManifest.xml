@@ -18,6 +18,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
+        <activity android:name=".Activities.MatchedUserActivity"></activity>
 
         <service
             android:name=".Activities.HomePageActivity"
@@ -45,7 +46,8 @@
         <activity
             android:name=".Activities.LoginActivity"
             android:theme="@style/AppTheme.Dark" />
-        <activity android:name=".Activities.HomePageActivity"
+        <activity
+            android:name=".Activities.HomePageActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".Graphs.LineChartActivity"

@@ -118,42 +118,33 @@
                     android:elevation="10dp"
                     android:background="@drawable/customborder">
                     <TextView
-                        android:text="Preferred time of Runs"
+                        android:text="Preferred method of ranking"
                         android:fontFamily="sans-serif-light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
                     <RadioGroup
-                        android:id="@+id/TimePreferred"
+                        android:id="@+id/RadioGroup"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal"
                         android:onClick="onRadioButtonClicked">
-                        <RadioButton android:id="@+id/radio_morning"
+                        <RadioButton android:id="@+id/radio_distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Morning"
+                            android:text="Distance"
                             android:textSize="13dp"/>
-                        <RadioButton android:id="@+id/radio_midday"
+                        <RadioButton android:id="@+id/radio_pace"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Midday"
+                            android:text="Pace"
                             android:textSize="13dp"/>
-                        <RadioButton android:id="@+id/radio_afternoon"
+                        <RadioButton android:id="@+id/radio_both"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Afternoon"
+                            android:text="Both"
                             android:textSize="13dp"/>
                     </RadioGroup>
                 </LinearLayout>
-
-                    <!--
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" /> -->
 
                     <Button
                         android:id="@+id/btn_search_user"

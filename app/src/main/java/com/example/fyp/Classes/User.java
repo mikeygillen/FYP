@@ -49,6 +49,14 @@ public class User {
         this.totalRuns = totalRuns;
     }
 
+    public User(String name, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
+        this.name = name;
+        this.distanceCovered = distanceCovered;
+        this.distanceAvg = distanceAvg;
+        this.paceAvg = paceAvg;
+        this.totalRuns = totalRuns;
+    }
+
     public String getName() {
         return name;
     }

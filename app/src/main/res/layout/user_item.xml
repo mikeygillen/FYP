@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp">
+
+        <LinearLayout
+            android:id="@+id/nameLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="User Name - " />
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="name" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/totalDistanceLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nameLayout"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total distance - " />
+            <TextView
+                android:id="@+id/totalDistanceView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Km"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/avgDistanceLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/totalDistanceLayout"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Average distance - " />
+            <TextView
+                android:id="@+id/avgDistanceView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Km"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/avgPaceLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/avgDistanceLayout"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Average Pace - " />
+            <TextView
+                android:id="@+id/avgPaceView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="min per Km" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/avgPaceLayout"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Runs - " />
+            <TextView
+                android:id="@+id/totalRunsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="total" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
