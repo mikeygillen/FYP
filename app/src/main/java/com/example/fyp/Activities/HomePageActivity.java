@@ -260,7 +260,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                     }
                 });
                 Log.d(TAG, "Route Tracking Finished");
-                Toast.makeText(this, "Workout complete! /n Distance Covered = " + d + "Km", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Workout complete! \n Distance Covered = " + d + "Km", Toast.LENGTH_LONG).show();
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(this, "Problem creating run.", Toast.LENGTH_LONG).show();
@@ -611,8 +611,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-
-        startActivity(new Intent(this, HomePageActivity.class));
     }
 
     @Override

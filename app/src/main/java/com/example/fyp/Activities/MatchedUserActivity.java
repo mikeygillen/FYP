@@ -1,11 +1,8 @@
 package com.example.fyp.Activities;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,16 +22,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
 import static com.google.android.material.floatingactionbutton.FloatingActionButton.OnClickListener;
 
 public class MatchedUserActivity extends AppCompatActivity implements UserAdapter.OnUserListener, OnClickListener {
     private static final String TAG = "MatchedUserActivity";
 
     private ArrayList<User> userList = new ArrayList<>();
+    private int distancePreferred, pacePreferred;
+    private String preference;
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter<UserAdapter.ViewHolder> mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter<UserAdapter.ViewHolder> adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private DatabaseReference UserRefs = FirebaseDatabase.getInstance().getReference("Users");
     private FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -42,65 +42,78 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUserId);
 
 
-   // private OnFragmentInteractionListener mListener;
+    /*private OnFragmentInteractionListener mListener;
 
-    Intent intent = getIntent();
-    String distanceProgress = intent.getExtras().getString("distance_value");
-    String paceProgress = intent.getExtras().getString("pace_value");
-    String preference = intent.getExtras().getString("preference_value");
+    public static void setPreferenceValues(int seekDistanceValue, int seekPaceValue, CharSequence text) {
+        Log.d(TAG, "setPreferenceValues: dis = " + seekDistanceValue +  " pace = " + seekPaceValue +  " pref = " + text);
+    }
 
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matched_user);
-        userList.clear();
-        String userKey =  UserRefs.push().getKey();
-
-        Toast.makeText(this, "Dis - " + distanceProgress + "pace - " + paceProgress + "pre - " + preference, Toast.LENGTH_LONG).show();
+        //userList.clear();
+        //String userKey =  UserRefs.push().getKey();
 
         retrieveUsers();
-        initRecyclerView(userList);
-
+        Log.d(TAG, "onCreate: userList = " + userList);
     }
 
-
     private void retrieveUsers() {
-        UserRefs.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot result : snapshot.getChildren()) {
-                    String name = result.child("Name").getValue().toString();
-                    double dis = new Double(Math. round(Float.parseFloat(snapshot.child("Total Distance").getValue().toString())));
-                    int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
-                    double aDistance = Math. round(dis/runs);
-                    double aPace = 5.4;
+        Log.d(TAG, "retrieveUsers: beginning");
+            UserRefs.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for (DataSnapshot result : snapshot.getChildren()) {
+                        try {
+                            Log.d(TAG, "onDataChange: snapshot = " + snapshot);
+                            Log.d(TAG, "onDataChange: result = " + result);
+                            String name = result.child("Name").getValue().toString();
+                            double dis = new Double(Math.round(Float.parseFloat(result.child("Total Distance").getValue().toString())));
+                            int runs = new Integer(result.child("Total Runs").getValue().toString());
+                            double aDistance = Math.round(dis / runs);
+                            double aPace = 5.4;
 
-                    User user1 = new User(name, dis, aDistance, aPace, runs);
-                    Log.d(TAG, "onDataChange: user1 - " + user1.getName());
-                    userList.add(user1);
+                            User user1 = new User(name, dis, aDistance, aPace, runs);
+                            userList.add(user1);
+                            Log.d(TAG, "onDataChange: userList - " + userList);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                            User user1 = new User("Joe", 1000, 100, 5, 10);
+                            Log.d(TAG, "onDataChange: user1 - " + user1.getName());
+                            userList.add(user1);
+                        }
+                    }
                 }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("The Retrieve User Failed: ");
-            }
-        });
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    System.out.println("The Retrieve User Failed: ");
+                }
+            });
+        Log.d(TAG, "retrieveUsers: ending");
+        initRecyclerView(userList);
     }
 
 
     private void initRecyclerView(ArrayList<User> list){
-        mRecyclerView = findViewById(R.id.userRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);  //CHANGED FROM getActivity()
-        mAdapter = new UserAdapter(list, this);  //CHANGED FROM this
+        Log.d(TAG, "initRecyclerView: Beginning");
+        Log.d(TAG, "initRecyclerView: ArrayList = " + list);
+        recyclerView = findViewById(R.id.userRecyclerView);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);  //CHANGED FROM getActivity()
+        adapter = new UserAdapter(list, this);  //CHANGED FROM this
 
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         //mRecyclerView.addItemDecoration(itemDecorator);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
+
+        Log.d(TAG, "initRecyclerView: Beginning");
     }
 
 

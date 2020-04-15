@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -152,24 +152,20 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
             }else if (sPace==null){
                 seekPaceValue = 100;
             }
-            Toast.makeText(getActivity(), "dis" + seekDistanceValue  + " - Pace: " + seekPaceValue + " - Preference: " + rb.getText(), Toast.LENGTH_LONG).show();
+            Log.d(TAG, "SearchUser: dis" + seekDistanceValue  + " - Pace: " + seekPaceValue + " - Preference: " + rb.getText());
 
+            //MatchedUserActivity.setPreferenceValues(seekDistanceValue, seekPaceValue, rb.getText());
             Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
-            intent.putExtra("distance_value", String.valueOf(seekDistanceValue));
-            intent.putExtra("pace_value", String.valueOf(seekPaceValue));
-            intent.putExtra("preferred_value", rb.getText());
             startActivity(intent);
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity(), "dis" + 100  + " - Pace: " + 100 + " - Preference: " + "Both", Toast.LENGTH_LONG).show();Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
-            intent.putExtra("distance_value", "100");
-            intent.putExtra("pace_value", "100");
-            intent.putExtra("preferred_value", "Both");
+
+            Log.d(TAG, "SearchUser: dis" + 100  + " - Pace: " + 100 + " - Preference: " + "Both");
+            //MatchedUserActivity.setPreferenceValues(100, 100, "Both");
+            Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
             startActivity(intent);
-
         }
-
         btnSearch.setEnabled(true);
     }
 

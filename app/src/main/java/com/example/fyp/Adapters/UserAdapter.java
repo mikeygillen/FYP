@@ -41,6 +41,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         User currentItem = mAllUsers.get(position);
 
+        Log.d(TAG, "onBindViewHolder: Current Item = " + currentItem);
         //holder.dist.setText(String.valueOf(Math.round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
         holder.name.setText(currentItem.getName());
         holder.tDis.setText(String.valueOf(Math.round(currentItem.getDistanceCovered())));

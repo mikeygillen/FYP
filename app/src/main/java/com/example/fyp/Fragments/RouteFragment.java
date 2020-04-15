@@ -120,7 +120,6 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
         buttonOther = (Button) v.findViewById(R.id.button_other_routes);
 
         retrieveRoutes();
-        initRecyclerView(routeList);
 
         buttonAll.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
@@ -167,6 +166,7 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
                 System.out.println("The RouteFragment failed: ");
             }
         });
+        initRecyclerView(routeList);
     }
 
     private void filterCurrent() {
