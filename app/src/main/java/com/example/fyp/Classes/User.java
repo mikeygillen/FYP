@@ -1,12 +1,15 @@
 package com.example.fyp.Classes;
 
+import java.util.ArrayList;
+
 public class User {
 
-    protected String name, email, height, weight, dob, gender, preferredTime;
+    protected String name, email, height, weight, dob, gender;
     protected double distanceCovered, distanceAvg, paceAvg, totalRunTime;
     protected int totalRuns;
+    protected ArrayList<String> following;
 
-    public User(String name, String email, String height, String weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime, int totalRuns) {
+    public User(String name, String email, String height, String weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime, int totalRuns, ArrayList following) {
         this.name = "";
         this.email = "";
         this.height = "";
@@ -18,6 +21,7 @@ public class User {
         this.paceAvg = 0;
         this.totalRunTime = 0;
         this.totalRuns = 0;
+        this.following = new ArrayList<>();
     }
 
     public User(String name, String email, double distanceCovered, int totalRuns) {
@@ -27,34 +31,37 @@ public class User {
         this.totalRuns = totalRuns;
     }
 
-    public User(String height, String weight, String dob, String gender, String preferredTime) {
+    public User(ArrayList<String> following) {
+        this.following = following;
+    }
+
+    public User(String height, String weight, String dob, String gender) {
         this.height = height;
         this.weight = weight;
         this.dob = dob;
         this.gender = gender;
-        this.preferredTime = preferredTime;
     }
 
-    public User(String name, String email, String height, String weight, String dob, String gender, String preferredTime, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
+    public User(String name, String email, String height, String weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
         this.name = name;
         this.email = email;
         this.height = height;
         this.weight = weight;
         this.dob = dob;
         this.gender = gender;
-        this.preferredTime = preferredTime;
         this.distanceCovered = distanceCovered;
         this.distanceAvg = distanceAvg;
         this.paceAvg = paceAvg;
         this.totalRuns = totalRuns;
     }
 
-    public User(String name, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
+    public User(String name, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns, String email) {
         this.name = name;
         this.distanceCovered = distanceCovered;
         this.distanceAvg = distanceAvg;
         this.paceAvg = paceAvg;
         this.totalRuns = totalRuns;
+        this.email = email;
     }
 
     public String getName() {
@@ -110,12 +117,12 @@ public class User {
 
     public void setDistanceCovered(double distanceCovered) { this.distanceCovered = distanceCovered; }
 
-    public String getPreferredTime() {
-        return preferredTime;
+    public ArrayList<String> getFollowing() {
+        return following;
     }
 
-    public void setPreferredTime(String preferredTime) {
-        this.preferredTime = preferredTime;
+    public void setFollowing(ArrayList<String> following) {
+        this.following = following;
     }
 
     public double getDistanceAvg() {

@@ -22,9 +22,11 @@
                 android:textStyle="bold"
                 android:text="User Name - " />
             <TextView
-                android:id="@+id/userName"
+                android:id="@+id/userNameView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 android:text="name" />
         </LinearLayout>
 

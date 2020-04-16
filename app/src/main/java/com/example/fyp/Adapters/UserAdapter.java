@@ -33,7 +33,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.route_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_item, parent, false);
         return new ViewHolder(v, mOnUserListener);
     }
 
@@ -41,13 +41,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         User currentItem = mAllUsers.get(position);
 
-        Log.d(TAG, "onBindViewHolder: Current Item = " + currentItem);
         //holder.dist.setText(String.valueOf(Math.round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
         holder.name.setText(currentItem.getName());
-        holder.tDis.setText(String.valueOf(Math.round(currentItem.getDistanceCovered())));
-        holder.aDis.setText(String.valueOf(Math.round(currentItem.getDistanceAvg())));
-        holder.aPace.setText(String.valueOf(Math.round(currentItem.getPaceAvg())));
-        holder.tRuns.setText(currentItem.getTotalRuns());
+        holder.tDis.setText(Math.round(currentItem.getDistanceCovered()) + "Km");
+        holder.aDis.setText(Math.round(currentItem.getDistanceAvg()) + "Km per Run");
+        holder.aPace.setText(Math.round(currentItem.getPaceAvg()) + "Min per Km");
+        holder.tRuns.setText(String.valueOf(currentItem.getTotalRuns()));
     }
 
     @Override
@@ -62,7 +61,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         public ViewHolder(View itemView, OnUserListener onUserListener) {
             super(itemView);
-            name = itemView.findViewById(R.id.userName);
+            name = itemView.findViewById(R.id.userNameView);
             tDis = itemView.findViewById(R.id.totalDistanceView);
             aDis = itemView.findViewById(R.id.avgDistanceView);
             aPace = itemView.findViewById(R.id.avgPaceView);
