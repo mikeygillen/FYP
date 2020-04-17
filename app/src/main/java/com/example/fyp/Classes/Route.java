@@ -8,7 +8,7 @@ public class Route {
 
     private double distance;
     private ArrayList<LatLng> locations = new ArrayList<>();
-    private String userId, createdOn;
+    private String userId, createdOn, start, end;
 
     public Route() {
         this.distance = 0.0;
@@ -28,6 +28,15 @@ public class Route {
         this.locations = locations;
         this.userId = userId;
         this.createdOn = createdOn;
+    }
+
+    public Route(double distance, ArrayList<LatLng> routePoints, String user, String created, String start, String end) {
+        this.distance = distance;
+        this.locations = routePoints;
+        this.userId = user;
+        this.createdOn = created;
+        this.start = start;
+        this.end = end;
     }
 
     public double getDistance() {
@@ -60,5 +69,21 @@ public class Route {
 
     public void setCreatedOn(String createdOn) {
         this.createdOn = createdOn;
+    }
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
     }
 }

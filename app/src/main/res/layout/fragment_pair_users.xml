@@ -109,43 +109,6 @@
                         android:layout_below="@+id/SeekBarPace"/>
                 </LinearLayout>
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="5dp"
-                    android:elevation="10dp"
-                    android:background="@drawable/customborder">
-                    <TextView
-                        android:text="Preferred method of ranking"
-                        android:fontFamily="sans-serif-light"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <RadioGroup
-                        android:id="@+id/RadioGroup"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:onClick="onRadioButtonClicked">
-                        <RadioButton android:id="@+id/radio_distance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Distance"
-                            android:textSize="13dp"/>
-                        <RadioButton android:id="@+id/radio_pace"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Pace"
-                            android:textSize="13dp"/>
-                        <RadioButton android:id="@+id/radio_both"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Both"
-                            android:textSize="13dp"/>
-                    </RadioGroup>
-                </LinearLayout>
-
                     <Button
                         android:id="@+id/btn_search_user"
                         android:layout_width="fill_parent"

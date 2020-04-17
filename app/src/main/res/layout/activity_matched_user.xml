@@ -12,14 +12,27 @@
             android:layout_height="wrap_content"
             android:background="@color/cardview_dark_background"
             android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            tools:ignore="MissingConstraints">
+            android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/button_all_users"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All Users" />
+                    android:text="All Users"
+                    />
+                <Button
+                    android:id="@+id/button_on_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/button_all_users"
+                    android:text="Distance "/>
+                <Button
+                    android:id="@+id/button_on_pace"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/button_on_distance"
+                    android:text="Pace" />
+
 
         </LinearLayout>
 
@@ -30,6 +43,15 @@
             android:layout_below="@+id/route_fragment_header"
             android:background="@android:color/darker_gray"
             android:padding="4dp"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            />
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="No Matches for your Current search. Please Try Again." />
 
 </RelativeLayout>

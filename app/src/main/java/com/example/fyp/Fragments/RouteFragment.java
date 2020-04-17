@@ -2,6 +2,8 @@ package com.example.fyp.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +37,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import static com.google.android.material.floatingactionbutton.FloatingActionButton.OnClickListener;
 
@@ -156,8 +161,28 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
                         routePoints.add(new LatLng(latitude, longitude));
                     }
 
-                    Route route1 = new Route(distance, routePoints, user, created);
-                    Log.d(TAG, "onDataChange: route1 - " + route1.getDistance());
+                    LatLng start = routePoints.get(0);
+                    LatLng end = routePoints.get(routePoints.size()-1);
+
+                    Geocoder geocoder;
+                    List<Address> addresses = null;
+                    geocoder = new Geocoder(getActivity(), Locale.getDefault());
+                    try {
+                        addresses = geocoder.getFromLocation(start.latitude, start.longitude, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String startAddress = addresses.get(0).getAddressLine(0);
+
+                    try {
+                        addresses = geocoder.getFromLocation(end.latitude, end.longitude, 1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    String endAddress = addresses.get(0).getAddressLine(0);
+
+                    Route route1 = new Route(distance, routePoints, user, created, startAddress, endAddress);
+                    Log.d(TAG, "onDataChange: route1 - " + route1.getLocations());
                     routeList.add(route1);
                 }
             }
@@ -184,6 +209,7 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
     private void filterOther() {
         Log.d(TAG, "filterOther Begin");
         ArrayList<Route> mFilterList = new ArrayList<>();
+
         for(Route route : routeList) {
             if(!route.getUserId().equals(currentUserId)) {
                 mFilterList.add(route);

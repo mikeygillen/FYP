@@ -40,11 +40,14 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.route_item, parent, false);
         return new ViewHolder(v, mOnRouteListener);
+
+
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-            Route currentItem = mAllRoutes.get(position);
+        Route currentItem = mAllRoutes.get(position);
+
             DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentItem.getUserId());
             mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -59,7 +62,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
                         holder.user.setText(name);
                     }
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -67,6 +69,9 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
             });
             holder.dist.setText(String.valueOf(Math.round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
             holder.created.setText(currentItem.getCreatedOn());
+
+        holder.start.setText(currentItem.getStart());
+        holder.end.setText(currentItem.getEnd());
     }
 
     @Override
@@ -76,7 +81,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView dist, user, created;
+        TextView dist, user, created, start, end;
         OnRouteListener onRouteListener;
 
         public ViewHolder(View itemView, OnRouteListener onRouteListener) {
@@ -84,6 +89,8 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
             dist = itemView.findViewById(R.id.routeDistanceView);
             user = itemView.findViewById(R.id.createdById);
             created = itemView.findViewById(R.id.createdOnDate);
+            start = itemView.findViewById(R.id.startPointView);
+            end = itemView.findViewById(R.id.endPointView);
             this.onRouteListener = onRouteListener;
 
             itemView.setOnClickListener(this);

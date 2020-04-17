@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -46,8 +44,6 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
     private TextView d, p;
     private Button btnSearch;
     private SeekBar sDistance, sPace;
-    private RadioGroup rg;
-    private RadioButton rb;
 
     private OnFragmentInteractionListener mListener;
 
@@ -90,7 +86,6 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
         v = inflater.inflate(R.layout.fragment_pair_users, container, false);
 
         btnSearch = (Button) v.findViewById(R.id.btn_search_user);
-        rg = (RadioGroup) v.findViewById(R.id.RadioGroup);
 
         sDistance = (SeekBar) v.findViewById(R.id.SeekBarDistance);
         sDistance.setOnSeekBarChangeListener(this);
@@ -140,10 +135,6 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
     private void SearchUser() {
         btnSearch.setEnabled(false);
 
-        try {
-            int selectedId = rg.getCheckedRadioButtonId();
-            rb = (RadioButton) v.findViewById(selectedId);
-
             int seekDistanceValue = sDistance.getProgress();
             int seekPaceValue = sPace.getProgress();
 
@@ -152,22 +143,16 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
             }else if (sPace==null){
                 seekPaceValue = 100;
             }
-            Log.d(TAG, "SearchUser: dis" + seekDistanceValue  + " - Pace: " + seekPaceValue + " - Preference: " + rb.getText());
+            Log.d(TAG, "SearchUser: dis" + seekDistanceValue  + " - Pace: " + seekPaceValue);
 
-            //MatchedUserActivity.setPreferenceValues(seekDistanceValue, seekPaceValue, rb.getText());
+            MatchedUserActivity.setPreferenceValues(seekDistanceValue, seekPaceValue);
             Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
             startActivity(intent);
 
-        } catch (Exception e) {
-            e.printStackTrace();
 
-            Log.d(TAG, "SearchUser: dis" + 100  + " - Pace: " + 100 + " - Preference: " + "Both");
-            //MatchedUserActivity.setPreferenceValues(100, 100, "Both");
-            Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
-            startActivity(intent);
-        }
         btnSearch.setEnabled(true);
-    }
+        }
+
 
         // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

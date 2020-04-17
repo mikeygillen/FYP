@@ -265,7 +265,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
 
                     tDistanceView.setText(String.valueOf(dis) + " Km");
                     tRunsView.setText(snapshot.child("Total Runs").getValue().toString() + " Workouts");
-                    aDistanceView.setText(aDistance + " Km per Run");
+                    aDistanceView.setText(aDistance + " Km");
 
 
                 } catch (Exception e) {
