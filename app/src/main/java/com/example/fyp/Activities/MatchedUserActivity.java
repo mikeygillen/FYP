@@ -35,7 +35,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private int best, worst;
 
     private ArrayList<User> userList = new ArrayList<>();
-    private TextView noData;
+    private TextView noData, cDistance, cTotalRuns, cAvgDistance;
     private Button buttonAll, buttonPace, buttonDistance;
 
     private RecyclerView recyclerView;
@@ -65,14 +65,17 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matched_user);
-        //userList.clear();
-        String userKey =  UserRefs.push().getKey();
+        userList.clear();
+        //String userKey =  UserRefs.push().getKey();
 
         buttonAll = (Button) findViewById(R.id.button_all_users);
         buttonDistance = (Button) findViewById(R.id.button_on_distance);
         buttonPace = (Button) findViewById(R.id.button_on_pace);
 
         noData = findViewById(R.id.empty_view);
+        cDistance = findViewById(R.id.current_total_distance);
+        cAvgDistance = (TextView) findViewById(R.id.current_avg_distance);
+        cTotalRuns = (TextView) findViewById(R.id.current_total_runs);
 
         retrieveUsers();
         retrieveCurrent();
@@ -106,6 +109,10 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
                 int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
                 currentDisAvg = Math.round(dis / runs);
                 currentPaceAvg = 10;
+
+                cDistance.setText("Total Distance covered = " + dis + "Km");
+                cAvgDistance.setText("Avg Distance covered = " + currentDisAvg + "Km");
+                cTotalRuns.setText("Total Runs = " + runs);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

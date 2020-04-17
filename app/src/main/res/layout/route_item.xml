@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="5dp">
+    app:cardCornerRadius="15dp"
+    android:padding="15dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp">
+        android:padding="20dp">
 
     <LinearLayout
         android:id="@+id/dateLayout"
@@ -37,8 +38,7 @@
             android:layout_height="wrap_content"
             android:text="Route distance - "
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginLeft="10dp" />
+            android:textStyle="bold" />
             <TextView
                 android:id="@+id/routeDistanceView"
                 android:layout_width="wrap_content"

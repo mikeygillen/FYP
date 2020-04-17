@@ -542,7 +542,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         MarkerOptions endPoint = new MarkerOptions();
         endPoint.position(routePoints.get(routePoints.size() - 1));
         endPoint.title(endAddress);
-        endPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        endPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         mMap.addMarker(endPoint);
 
         PolylineOptions poly = new PolylineOptions().clickable(true);
@@ -554,7 +554,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 poly.add(latLong);
             }
 
-            poly.width(8).color(Color.RED).geodesic(true);
+            poly.width(15).color(Color.BLUE).geodesic(true);
             mMap.addPolyline(poly);
         }
     }
