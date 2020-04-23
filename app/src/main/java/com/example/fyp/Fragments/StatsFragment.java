@@ -22,7 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fyp.Activities.HomePageActivity;
+import com.example.fyp.Maps.HomePageActivity;
 import com.example.fyp.Adapters.RunAdapter;
 import com.example.fyp.Classes.Run;
 import com.example.fyp.Graphs.LineChartActivity;

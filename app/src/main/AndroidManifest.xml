@@ -18,13 +18,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-
+        <activity android:name=".Maps.Locationservices"></activity>
         <activity
             android:name=".Activities.MatchedUserActivity"
             android:theme="@style/AppTheme.Dark" />
 
         <service
-            android:name=".Activities.HomePageActivity"
+            android:name=".Maps.HomePageActivity"
             android:foregroundServiceType="location" />
 
         <activity android:name=".Fragments.EditProfileFragment" />
@@ -50,7 +50,7 @@
             android:name=".Activities.LoginActivity"
             android:theme="@style/AppTheme.Dark" />
         <activity
-            android:name=".Activities.HomePageActivity"
+            android:name=".Maps.HomePageActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".Graphs.LineChartActivity"

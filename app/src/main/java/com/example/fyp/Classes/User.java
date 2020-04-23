@@ -9,6 +9,10 @@ public class User {
     protected int totalRuns;
     protected ArrayList<String> following;
 
+    public User() {
+
+    }
+
     public User(String name, String email, String height, String weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime, int totalRuns, ArrayList following) {
         this.name = "";
         this.email = "";
@@ -29,10 +33,6 @@ public class User {
         this.email = email;
         this.distanceCovered = distanceCovered;
         this.totalRuns = totalRuns;
-    }
-
-    public User(ArrayList<String> following) {
-        this.following = following;
     }
 
     public User(String height, String weight, String dob, String gender) {

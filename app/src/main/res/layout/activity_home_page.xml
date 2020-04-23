@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    tools:context=".Activities.HomePageActivity">
+    tools:context=".Maps.HomePageActivity">
 
 
     <fragment
@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".Activities.HomePageActivity" />
+        tools:context=".Maps.HomePageActivity" />
 
     <FrameLayout
         android:id="@+id/fragment_container"

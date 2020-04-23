@@ -1,20 +1,17 @@
-package com.example.fyp.Activities;
+package com.example.fyp.Maps;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,10 +24,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.fyp.Activities.LoginActivity;
+import com.example.fyp.Activities.MainActivity;
 import com.example.fyp.Classes.Route;
 import com.example.fyp.Classes.Run;
 import com.example.fyp.Fragments.EditProfileFragment;
@@ -52,13 +50,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -67,7 +65,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.json.JSONArray;
@@ -88,20 +85,9 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private static final String TAG = "HomePageActivity";
 
     private static GoogleMap mMap;
-
-    private LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            locationResult.getLastLocation();
-
-            for (Location ignored : locationResult.getLocations()) {
-                Log.e("TAG", "Location result was found");
-            }
-        }
-    };
     private FusedLocationProviderClient fusedLocationClient;
     private GoogleApiClient googleApiClient;
-    private Marker mCurrentMarker;
+    private Location currentLocation;
 
     private static final int REQUEST_CODE = 101;
     private float mDistanceCovered;
@@ -118,8 +104,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
     private static ArrayList<Location> locations = new ArrayList<>();
     private ArrayList<LatLng> LatLongs = new ArrayList<>();
-
-    private PolylineOptions polylineOptions;
     private static Fragment fragment = null;
 
     @Override
@@ -185,7 +169,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         startTime = System.currentTimeMillis();
         mDistanceCovered = 0;
 
-        if (isLocationEnabled()){
             LocationRequest request = new LocationRequest();
             request.setInterval(30000);
             request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -208,9 +191,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 }, null);
 
             }
-        } else {
-            Log.d(TAG, "location is null ...............");
-        }
     }
 
 
@@ -343,29 +323,30 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.marker:
-                Toast.makeText(this, "Display all Marker selected", Toast.LENGTH_SHORT).show();
+                showNearbyLights();
+                Toast.makeText(this, "Display nearby streetlight locations", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.heatmap:
-                heatmapAll();
-                Toast.makeText(this, "Display all Heatmaps selected", Toast.LENGTH_SHORT).show();
+                showNearbyHeatmap();
+                Toast.makeText(this, "Display heat map of nearby streetlights", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.heatmapfingal:
                 heatmap("fingal.json");
                 return true;
             case R.id.markerfingal:
-                marker(R.raw.fingal);
+                marker("fingal.json");
                 return true;
             case R.id.heatmapcity:
                 heatmap("dublin.json");
                 return true;
             case R.id.markercity:
-                marker(R.raw.dublin);
+                marker("dublin.json");
                 return true;
             case R.id.heatmapsouth:
                 heatmap("south.json");
                 return true;
             case R.id.markersouth:
-                marker(R.raw.south);
+                marker("south.json");
                 return true;
             case R.id.logout:
                 firebaseAuth.signOut();
@@ -385,13 +366,13 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mMap.clear();
+        //mMap.clear();
         if (list != null) {
             new HeatmapTileProvider.Builder().data(list).build();
         }
     }
-    public void heatmapAll(){
-        mMap.clear();
+    public void showNearbyHeatmap(){
+       // mMap.clear();
         List<LatLng> list = null;
         try {
             list = readItems("fingal.json");
@@ -402,22 +383,57 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         } catch (IOException e) {
             e.printStackTrace();
         }
-        HeatmapTileProvider mProvider = null;
         if (list != null) {
-            mProvider = new HeatmapTileProvider.Builder().data(list).build();
+            new HeatmapTileProvider.Builder().data(list).build();
         }
-        mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
     }
 
-    public void marker(int marker) {
-        GeoJsonLayer layer;
+    public void showNearbyLights() {
+        Log.d(TAG, "showNearbyLights: Beginning");
+        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.ic_light);
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 35, 35, false);
+        BitmapDescriptor smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker);
+
+        List<LatLng> list = null;
         try {
-            layer = new GeoJsonLayer(mMap, marker, getApplicationContext());
-            layer.addLayerToMap();
+            list = readItems("fingal.json");
+            list.addAll(readItems("dublin.json"));
+            list.addAll(readItems("south.json"));
+        } catch (JSONException e) {
+            Toast.makeText(this, "Problem reading list of locations.", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        for (LatLng light : list){
+            Location target = new Location("target");
+            target.setLatitude(light.latitude);
+            target.setLongitude(light.longitude);
+            if (currentLocation.distanceTo(target) < 2000) {
+                LatLng streetLight = new LatLng(light.latitude, light.longitude);
+                mMap.addMarker(new MarkerOptions().position(streetLight).icon(smallMarkerIcon));
+            }
+        }
+    }
+
+    public void marker(String json) {
+        Log.d(TAG, "show Lights For Specific Region: Beginning");
+        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.ic_light);
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 35, 35, false);
+        BitmapDescriptor smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker);
+
+        List<LatLng> list = null;
+        try {
+            list = readItems(json);
         } catch (JSONException e) {
+            Toast.makeText(this, "Problem reading list of locations.", Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        for (LatLng light : list){
+                LatLng streetLight = new LatLng(light.latitude, light.longitude);
+                mMap.addMarker(new MarkerOptions().position(streetLight).icon(smallMarkerIcon));
         }
     }
 
@@ -434,39 +450,31 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         return list;
     }
 
-    @SuppressLint("MissingPermission")
-    private void getLastLocation(){
-        if (isLocationEnabled()) {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+    private void getDeviceLocation() {
+        /*
+         * Get the best and most recent location of the device, which may be null in rare
+         * cases when a location is not available.
+         */
+        try {
+            Task locationResult = fusedLocationClient.getLastLocation();
+            locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                 @Override
-                public void onSuccess(Location location) {
-                    if (location != null){
-                        Log.e("TAG", "Got last known location");
-                    }else{
-                            Log.e("TAG", "GPS has failed");
-                            requestNewLocationData();
-                        }
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        currentLocation = (Location) task.getResult();
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), 13));
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.");
                     }
-                });
-        } else {
-            Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivity(intent);
+                }
+            });
+
+        } catch(SecurityException e)  {
+            Log.e("Exception: %s", e.getMessage());
         }
-    }
-
-
-    @SuppressLint("MissingPermission")
-    private void requestNewLocationData(){
-
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-
+        Log.d(TAG, "getDeviceLocation: = " + currentLocation);
     }
 
     @Override
@@ -476,7 +484,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         Intent i = getIntent();
         ArrayList<LatLng> routePoints = i.getParcelableArrayListExtra("route_points");
 
-        if (checkPermissions()){
             if (routePoints!=null){
                 try {
                     mapRoute(routePoints);
@@ -484,41 +491,13 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                     e.printStackTrace();
                 }
             }else {
-                getLastLocation();
+                getDeviceLocation();
                 mMap.setMyLocationEnabled(true);
             }
-        }else{
-            requestPermissions();
-            mMap.setMyLocationEnabled(true);
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        if (mCurrentMarker != null) {
-            mCurrentMarker.remove();
-        }
-        //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        mCurrentMarker = mMap.addMarker(markerOptions);
-
-        //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-
-        //stop location updates
-        if (fusedLocationClient != null) {
-            fusedLocationClient.removeLocationUpdates(mLocationCallback);
-        }
     }
 
     public void mapRoute(ArrayList<LatLng> routePoints) throws IOException {
         Log.d(TAG, "mapRoute beginning.... ");
-
         LatLng start = routePoints.get(0);
         LatLng end = routePoints.get(routePoints.size()-1);
 
@@ -532,17 +511,13 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         String endAddress = addresses.get(0).getAddressLine(0);
 
         MarkerOptions startPoint = new MarkerOptions();
-        startPoint.position(routePoints.get(0));
-        startPoint.title(startAddress);
-        startPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        startPoint.position(routePoints.get(0)).title(startAddress).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mMap.addMarker(startPoint);
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(startPoint.getPosition().latitude, startPoint.getPosition().longitude), 15.0f));
 
         MarkerOptions endPoint = new MarkerOptions();
-        endPoint.position(routePoints.get(routePoints.size() - 1));
-        endPoint.title(endAddress);
-        endPoint.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        endPoint.position(routePoints.get(routePoints.size() - 1)).title(endAddress).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mMap.addMarker(endPoint);
 
         PolylineOptions poly = new PolylineOptions().clickable(true);
@@ -558,7 +533,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             mMap.addPolyline(poly);
         }
     }
-
 
     @Override
     protected void onStart(){
@@ -580,41 +554,21 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     }
 
     @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
     public void onConnectionSuspended(int i){
         Log.e("HomePageActivity", "Connection suspended");
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle){
-        if(!checkPermissions()){
-            requestPermissions();
-        }else{
-            getLastLocation();
-        }
-    }
+    public void onFragmentInteraction(Uri uri) {
 
-    private boolean isLocationEnabled() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
-                LocationManager.NETWORK_PROVIDER
-        );
-    }
-
-    private boolean checkPermissions() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermissions() {
-        ActivityCompat.requestPermissions(this, new String[]{
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onLocationChanged(Location location) {
     }
 }

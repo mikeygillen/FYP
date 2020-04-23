@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fyp.Activities.HomePageActivity;
+import com.example.fyp.Maps.HomePageActivity;
 import com.example.fyp.Adapters.RouteAdapter;
 import com.example.fyp.Classes.Route;
 import com.example.fyp.Interface.Interface;
