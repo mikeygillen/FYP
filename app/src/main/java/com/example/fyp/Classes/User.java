@@ -4,20 +4,21 @@ import java.util.ArrayList;
 
 public class User {
 
-    protected String name, email, height, weight, dob, gender;
+    protected String name, email, dob, gender;
     protected double distanceCovered, distanceAvg, paceAvg, totalRunTime;
-    protected int totalRuns;
+    protected int totalRuns, height, weight, age;
     protected ArrayList<String> following;
 
     public User() {
 
     }
 
-    public User(String name, String email, String height, String weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime, int totalRuns, ArrayList following) {
+    public User(String name, String email, int height, int weight, int age, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime, int totalRuns, ArrayList following) {
         this.name = "";
         this.email = "";
-        this.height = "";
-        this.weight = "";
+        this.height = 0;
+        this.weight = 0;
+        this.age = 0;
         this.dob = "";
         this.gender = "";
         this.distanceCovered = 0;
@@ -35,14 +36,14 @@ public class User {
         this.totalRuns = totalRuns;
     }
 
-    public User(String height, String weight, String dob, String gender) {
+    public User(int height, int weight, String dob, String gender) {
         this.height = height;
         this.weight = weight;
         this.dob = dob;
         this.gender = gender;
     }
 
-    public User(String name, String email, String height, String weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
+    public User(String name, String email, int height, int weight, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
         this.name = name;
         this.email = email;
         this.height = height;
@@ -72,20 +73,28 @@ public class User {
         this.name = name;
     }
 
-    public String getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(String height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
-    public String getWeight() {
+    public int getWeight() {
         return weight;
     }
 
-    public void setWeight(String weight) {
+    public void setWeight(int weight) {
         this.weight = weight;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getEmail() {
