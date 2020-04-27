@@ -134,7 +134,6 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
 
     private void SearchUser() {
         btnSearch.setEnabled(false);
-
             int seekDistanceValue = sDistance.getProgress();
             int seekPaceValue = sPace.getProgress();
 
@@ -148,7 +147,6 @@ public class PairUsersFragment extends Fragment implements SeekBar.OnSeekBarChan
             MatchedUserActivity.setPreferenceValues(seekDistanceValue, seekPaceValue);
             Intent intent = new Intent(getActivity(), MatchedUserActivity.class);
             startActivity(intent);
-
 
         btnSearch.setEnabled(true);
         }

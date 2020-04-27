@@ -1,6 +1,7 @@
 package com.example.fyp.Maps;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -206,75 +208,102 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             final double d = calculateDistance(locations.get(0), locations.get(locations.size() - 1));
             final String t = Helper.secondToHHMMSS(Helper.elapsedTime(startTime));
             final double p = Helper.calculatePace(Helper.elapsedTime(startTime), d);
-            Log.d(TAG, "endRunTracking: Pace - " + p);
-            Log.d(TAG, "endRunTracking: Distance - " + d);
-            Log.d(TAG, "endRunTracking: Duration - " + t);
 
             endTime = System.currentTimeMillis();
             SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy");
-            String strDate = formatter.format(endTime);
+            final String strDate = formatter.format(endTime);
 
             Log.d(TAG, "String Date = " + strDate);
 
-            String routeKey =  newRoute.push().getKey();
-            final Route route = new Route(d, LatLongs, userid, strDate);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(HomePageActivity.this);
+            alertDialogBuilder.setTitle("Workout Finished");
+            alertDialogBuilder.setMessage("Are you happy with your workout?");
+            alertDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String routeKey =  newRoute.push().getKey();
+                    final Route route = new Route(d, LatLongs, userid, strDate);
 
-            try {
-                newRoute.child(routeKey).setValue(route, new DatabaseReference.CompletionListener() {
-                    public void onComplete(DatabaseError error, DatabaseReference ref) {
-                        Log.d("ssd", "onComplete: " + error);
+                    try {
+                        newRoute.child(routeKey).setValue(route, new DatabaseReference.CompletionListener() {
+                            public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                Log.d("ssd", "onComplete: " + error);
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplication(), "Problem creating route.", Toast.LENGTH_LONG).show();
                     }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Problem creating route.", Toast.LENGTH_LONG).show();
-            }
 
-            String runKey = newRun.push().getKey();
-            final Run run = new Run(t, d, p, routeKey, userid, strDate);
+                    String runKey = newRun.push().getKey();
+                    final Run run = new Run(t, d, p, routeKey, userid, strDate);
 
-            try {
-                newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
-                    public void onComplete(DatabaseError error, DatabaseReference ref) {
-                        Log.d("ssd", "onComplete: " + error);
+                    try {
+                        newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
+                            public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                Log.d("ssd", "onComplete: " + error);
+                            }
+                        });
+                        Log.d(TAG, "Route Tracking Finished");
+                        Toast.makeText(getApplication(), "Workout complete! \n Distance Covered = " + d + "Km", Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplication(), "Problem creating run.", Toast.LENGTH_LONG).show();
                     }
-                });
-                Log.d(TAG, "Route Tracking Finished");
-                Toast.makeText(this, "Workout complete! \n Distance Covered = " + d + "Km", Toast.LENGTH_LONG).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Problem creating run.", Toast.LENGTH_LONG).show();
-            }
 
-            try {
-                mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        try {
-                            double tDis = new Double(snapshot.child("Total Distance").getValue().toString()) + d;
-                            mUserRef.child("Total Distance").setValue(tDis);
+                    try {
+                        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                try {
+                                    double tDis = new Double(snapshot.child("Total Distance").getValue().toString()) + d;
+                                    mUserRef.child("Total Distance").setValue(tDis);
 
-                            int tRuns = new Integer(snapshot.child("Total Runs").getValue().toString()) + 1;
-                            mUserRef.child("Total Runs").setValue(tRuns);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                                    int tRuns = new Integer(snapshot.child("Total Runs").getValue().toString()) + 1;
+                                    mUserRef.child("Total Runs").setValue(tRuns);
+
+                                    int tCalories = new Integer(snapshot.child("Total Calories").getValue().toString());
+                                    mUserRef.child("Total Runs").setValue(tRuns);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.d(TAG, "Update user totals: FAILED " + e);
+                        e.printStackTrace();
                     }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
-            } catch (Exception e) {
-                Log.d(TAG, "Update user totals: FAILED " + e);
-                e.printStackTrace();
-            }
+                }
+            });
+            alertDialogBuilder.setNegativeButton("Abandon", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(HomePageActivity.this, "Workout Discarded", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+            alertDialogBuilder.create().show();
+
         }
     }
 
     // Assume this calculates precise distance
     private float calculateDistance(Location start, Location end){
         float distanceDiff = start.distanceTo(end); // Return meter unit
-            return mDistanceCovered + distanceDiff;
+        return mDistanceCovered + distanceDiff;
+    }
+
+    // Assume this calculates precise calories
+    private double calculateCalorie(int Height, int Weight, int age, String gender){
+       // For men:      BMR = 10W + 6.25H - 5A + 5      W = weight  H height  A = age
+       // For women:    BMR = 10W + 6.25H - 5A - 161
+
+
+
+        return calories;
     }
 
     private boolean loadFragment(Fragment fragment) {
