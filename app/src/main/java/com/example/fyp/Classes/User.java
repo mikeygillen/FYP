@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class User {
 
     protected String name, email, dob, gender;
-    protected double distanceCovered, distanceAvg, paceAvg, totalRunTime;
+    protected double distanceCovered, distanceAvg, paceAvg, totalRunTime, totalCalories;
     protected int totalRuns, height, weight, age;
     protected ArrayList<String> following;
 
@@ -13,7 +13,7 @@ public class User {
 
     }
 
-    public User(String name, String email, int height, int weight, int age, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime, int totalRuns, ArrayList following) {
+    public User(String name, String email, int height, int weight, int age, String dob, String gender, double distanceCovered, double distanceAvg, double paceAvg, double totalRunTime,  double totalCalories, int totalRuns, ArrayList following) {
         this.name = "";
         this.email = "";
         this.height = 0;
@@ -22,6 +22,7 @@ public class User {
         this.dob = "";
         this.gender = "";
         this.distanceCovered = 0;
+        this.totalCalories = 0;
         this.distanceAvg = 0;
         this.paceAvg = 0;
         this.totalRunTime = 0;
@@ -165,5 +166,13 @@ public class User {
     public void updateDistanceCovered(float distanceWalked) {this.distanceCovered = this.distanceCovered + distanceWalked; }
 
     public void updateTotalRun() {this.totalRuns = this.totalRuns + 1;  }
+
+    public double getTotalCalories() {
+        return totalCalories;
+    }
+
+    public void setTotalCalories(double totalCalories) {
+        this.totalCalories = totalCalories;
+    }
 }
 

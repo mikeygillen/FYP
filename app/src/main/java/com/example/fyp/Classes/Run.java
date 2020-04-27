@@ -1,12 +1,13 @@
 package com.example.fyp.Classes;
 
 public class Run {
-    protected double pace, distance;
+    protected double pace, distance, calories;
     protected String userId, routeId, duration, createdOn;
 
-    public Run(double pace, double distance, String duration, String userId, String routeId, String createdOn) {
+    public Run(double pace, double distance, double calories, String duration, String userId, String routeId, String createdOn) {
         this.pace = 0;
         this.distance = 0;
+        this.calories = 0;
         this.userId = "";
         this.routeId = "";
         this.duration = "";
@@ -16,14 +17,6 @@ public class Run {
     public Run() {
 
     }
-
-    /*public Run(String duration, double distance, double pace, String route, String createdOn) {
-        this.pace = pace;
-        this.distance = distance;
-        this.duration = duration;
-        this.routeId = routeId;
-        this.createdOn = createdOn;
-    }*/
 
     public Run(String duration, double distance, double pace, String routeId, String userId, String createdOn) {
         this.duration = duration;
@@ -43,6 +36,16 @@ public class Run {
         this.createdOn = createdOn;
     }
 
+    public Run(String duration, double distance, double pace, double calories, String routeId, String userId, String createdOn) {
+        this.duration = duration;
+        this.distance = distance;
+        this.pace = pace;
+        this.calories = calories;
+        this.routeId = routeId;
+        this.userId = userId;
+        this.createdOn = createdOn;
+    }
+
     public double getPace() {
         return pace;
     }
@@ -57,6 +60,14 @@ public class Run {
 
     public void setDistance(double distance) {
         this.distance = distance;
+    }
+
+    public double getCalories() {
+        return calories;
+    }
+
+    public void setCalories(double calories) {
+        this.calories = calories;
     }
 
     public String getDuration() {

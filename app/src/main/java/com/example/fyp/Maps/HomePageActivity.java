@@ -107,6 +107,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     private static ArrayList<Location> locations = new ArrayList<>();
     private ArrayList<LatLng> LatLongs = new ArrayList<>();
     private static Fragment fragment = null;
+    private int height, weight, age;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,26 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    height = new Integer(snapshot.child("Height").getValue().toString());
+                    weight = new Integer(snapshot.child("Weight").getValue().toString());
+                    age = new Integer(snapshot.child("Age").getValue().toString());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    //Toast.makeText(getActivity(), "Please update values" , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         startRun.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
@@ -208,6 +229,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
             final double d = calculateDistance(locations.get(0), locations.get(locations.size() - 1));
             final String t = Helper.secondToHHMMSS(Helper.elapsedTime(startTime));
             final double p = Helper.calculatePace(Helper.elapsedTime(startTime), d);
+            final double c = calculateCalorie(d, p);
 
             endTime = System.currentTimeMillis();
             SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy");
@@ -217,7 +239,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(HomePageActivity.this);
             alertDialogBuilder.setTitle("Workout Finished");
-            alertDialogBuilder.setMessage("Are you happy with your workout?");
+            alertDialogBuilder.setMessage("Are you happy with your workout?" + "\n Distance Covered = " + d + "Km" + "\n Time = " + t + "\n Pace = " + p + "min/Km" + "\n Calories Burned = " + c);
             alertDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -236,7 +258,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                     }
 
                     String runKey = newRun.push().getKey();
-                    final Run run = new Run(t, d, p, routeKey, userid, strDate);
+                    final Run run = new Run(t, d, p, c, routeKey, userid, strDate);
 
                     try {
                         newRun.child(runKey).setValue(run, new DatabaseReference.CompletionListener() {
@@ -262,8 +284,8 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                                     int tRuns = new Integer(snapshot.child("Total Runs").getValue().toString()) + 1;
                                     mUserRef.child("Total Runs").setValue(tRuns);
 
-                                    int tCalories = new Integer(snapshot.child("Total Calories").getValue().toString());
-                                    mUserRef.child("Total Runs").setValue(tRuns);
+                                    double tCalories = new Double(snapshot.child("Total Calories").getValue().toString() + c);
+                                    mUserRef.child("Total Calories").setValue(tCalories);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -297,12 +319,27 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     }
 
     // Assume this calculates precise calories
-    private double calculateCalorie(int Height, int Weight, int age, String gender){
-       // For men:      BMR = 10W + 6.25H - 5A + 5      W = weight  H height  A = age
-       // For women:    BMR = 10W + 6.25H - 5A - 161
+    private double calculateCalorie(double d, double p){
+        //Total calories burned = Duration (in minutes)*(MET*3.5*weight in kg)/200
+        double calories = 0;
 
+        if (p >= 10){
+            calories = d*(3.8*3.5*weight) / 200;
+        }else if (p >=8) {
+            calories = d * (4.3 * 3.5 * weight) / 200;
+        }else if (p >=7) {
+            calories = d * (5.8 * 3.5 * weight) / 200;
+        }else if (p >=6) {
+            calories = d * (9.8 * 3.5 * weight) / 200;
+        }else if (p >=5) {
+            calories = d * (12.3 * 3.5 * weight) / 200;
+        }else if (p >=4) {
+            calories = d * (18 * 3.5 * weight) / 200;
+        }else {
+            calories = d * (23 * 3.5 * weight) / 200;
+        }
 
-
+        Log.d(TAG, "calculateCalorie: calories = " + calories);
         return calories;
     }
 

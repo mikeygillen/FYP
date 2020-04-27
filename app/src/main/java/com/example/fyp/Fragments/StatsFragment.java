@@ -59,7 +59,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
     private String mParam2;
     private Spinner filter1, filter2;
     private Button btnLineChart, btnPieChart;
-    private TextView tDistanceView, aDistanceView, tRunsView, fRun, sRun;
+    private TextView tDistanceView, aDistanceView, tRunsView, fRun, sRun, tCalories;
     private String furthest, shortest;
 
     View v;
@@ -123,6 +123,7 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         tDistanceView = v.findViewById(R.id.text_total_distance);
         aDistanceView = v.findViewById(R.id.text_avg_distance);
         tRunsView = v.findViewById(R.id.text_total_runs);
+        tCalories = v.findViewById(R.id.text_total_calories);
         fRun = v.findViewById(R.id.text_furthest_run);
         sRun = v.findViewById(R.id.text_shortest_run);
 
@@ -130,17 +131,19 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity(), R.array.personal_filter, android.R.layout.simple_spinner_item);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filter1.setAdapter(adapter1);
-
+/*
         filter2 = (Spinner) v.findViewById(R.id.progression_filter);
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.progression_filter, android.R.layout.simple_spinner_item);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filter2.setAdapter(adapter2);
 
+ */
+
         retrieveUserInfo();
         retrieveRuns();
         setFurthestShortest();
 
-        btnLineChart = v.findViewById(R.id.btnLineChart);
+        //btnLineChart = v.findViewById(R.id.btnLineChart);
         btnPieChart = v.findViewById(R.id.btnPieChart);
 
         btnPieChart.setOnClickListener(new View.OnClickListener() {
@@ -262,11 +265,12 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                     double dis = new Double(Math. round(Float.parseFloat(snapshot.child("Total Distance").getValue().toString())));
                     int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
                     double aDistance = Math. round(dis/runs);
+                    double cal = new Double(Math. round(Float.parseFloat(snapshot.child("Total Calories").getValue().toString())));
 
                     tDistanceView.setText(dis + " Km");
                     tRunsView.setText(snapshot.child("Total Runs").getValue().toString() + " Workouts");
                     aDistanceView.setText(aDistance + " Km");
-
+                    tCalories.setText(cal + " Calories");
 
                 } catch (Exception e) {
                     e.printStackTrace();
