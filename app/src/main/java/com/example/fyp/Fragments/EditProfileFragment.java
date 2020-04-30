@@ -1,10 +1,5 @@
 package com.example.fyp.Fragments;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.net.Uri;
@@ -19,6 +14,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.fyp.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -151,7 +151,7 @@ public class EditProfileFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                     try {
-                        String date = snapshot.child("Birth Date").getValue().toString();
+                        String date = snapshot.child("DOB").getValue().toString();
                         String segments[] = date.split("-");
                         int year = Integer.parseInt(segments[segments.length - 1]);
                         int month = Integer.parseInt(segments[segments.length - 2]);

@@ -226,9 +226,9 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 LatLongs.add(new LatLng(locations.get(i).getLatitude(), locations.get(i).getLongitude()));
             }
 
-            final double d = calculateDistance(locations.get(0), locations.get(locations.size() - 1));
+            final double d = Math.round(calculateDistance(locations.get(0), locations.get(locations.size() - 1)));
             final String t = Helper.secondToHHMMSS(Helper.elapsedTime(startTime));
-            final double p = Helper.calculatePace(Helper.elapsedTime(startTime), d);
+            final double p = Math.round(Helper.calculatePace(Helper.elapsedTime(startTime), d));
             final double c = calculateCalorie(d, p);
 
             endTime = System.currentTimeMillis();
@@ -278,14 +278,19 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 try {
-                                    double tDis = new Double(snapshot.child("Total Distance").getValue().toString()) + d;
+                                    double tDis = new Double(snapshot.child("TotalDistance").getValue().toString()) + d;
                                     mUserRef.child("Total Distance").setValue(tDis);
 
-                                    int tRuns = new Integer(snapshot.child("Total Runs").getValue().toString()) + 1;
+                                    int tRuns = new Integer(snapshot.child("TotalRuns").getValue().toString()) + 1;
                                     mUserRef.child("Total Runs").setValue(tRuns);
 
-                                    double tCalories = new Double(snapshot.child("Total Calories").getValue().toString() + c);
+                                    double tCalories = new Double(snapshot.child("TotalCalories").getValue().toString() + c);
                                     mUserRef.child("Total Calories").setValue(tCalories);
+
+
+                                    double tAvg = new Double(snapshot.child("AvgPace").getValue().toString()) + p;
+                                    mUserRef.child("AvgPace").setValue(tAvg);
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -320,11 +325,10 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
     // Assume this calculates precise calories
     private double calculateCalorie(double d, double p){
-        //Total calories burned = Duration (in minutes)*(MET*3.5*weight in kg)/200
         double calories = 0;
 
         if (p >= 10){
-            calories = d*(3.8*3.5*weight) / 200;
+            calories = d*(3*3.5*weight) / 200;
         }else if (p >=8) {
             calories = d * (4.3 * 3.5 * weight) / 200;
         }else if (p >=7) {
@@ -340,7 +344,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         }
 
         Log.d(TAG, "calculateCalorie: calories = " + calories);
-        return calories;
+        return Math.round(calories);
     }
 
     private boolean loadFragment(Fragment fragment) {
@@ -432,13 +436,13 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //mMap.clear();
+        mMap.clear();
         if (list != null) {
             new HeatmapTileProvider.Builder().data(list).build();
         }
     }
     public void showNearbyHeatmap(){
-       // mMap.clear();
+        mMap.clear();
         List<LatLng> list = null;
         try {
             list = readItems("fingal.json");
@@ -485,7 +489,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     public void marker(String json) {
         Log.d(TAG, "show Lights For Specific Region: Beginning");
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.ic_light);
-        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 35, 35, false);
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 100, 100, false);
         BitmapDescriptor smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker);
 
         List<LatLng> list = null;
@@ -517,10 +521,6 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     }
 
     private void getDeviceLocation() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
         try {
             Task locationResult = fusedLocationClient.getLastLocation();
             locationResult.addOnCompleteListener(this, new OnCompleteListener() {
@@ -552,6 +552,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
             if (routePoints!=null){
                 try {
+                    mMap.setMyLocationEnabled(true);
                     mapRoute(routePoints);
                 } catch (IOException e) {
                     e.printStackTrace();

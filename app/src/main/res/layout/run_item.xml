@@ -73,13 +73,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Route ran - " />
+                    android:text="Calories burned - " />
                 <TextView
-                    android:id="@+id/routeId"
+                    android:id="@+id/calorie_burned_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="Route Id here"
+                    android:text="Calories"
                     android:textSize="15sp"
                     android:layout_marginLeft="8dp" />
             </LinearLayout>

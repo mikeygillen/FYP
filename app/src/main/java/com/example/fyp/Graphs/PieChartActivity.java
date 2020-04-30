@@ -41,8 +41,6 @@ public class PieChartActivity extends AppCompatActivity {
         pds.setColors(ColorTemplate.COLORFUL_COLORS);
          pieChart.setNoDataText("");
 
-
-
         //LEGEND SPECIFICATIONS
         Legend legend = pieChart.getLegend();
         legend.setEnabled(true);

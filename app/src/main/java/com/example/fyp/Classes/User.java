@@ -57,7 +57,7 @@ public class User {
         this.totalRuns = totalRuns;
     }
 
-    public User(String name, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns, String email) {
+    public User(String name, String email, double distanceCovered, double distanceAvg, double paceAvg, int totalRuns) {
         this.name = name;
         this.distanceCovered = distanceCovered;
         this.distanceAvg = distanceAvg;
@@ -144,7 +144,7 @@ public class User {
     }
 
     public double getPaceAvg() {
-        return distanceCovered / totalRunTime;
+        return paceAvg;
     }
 
     public void setPaceAvg(double paceAvg) {

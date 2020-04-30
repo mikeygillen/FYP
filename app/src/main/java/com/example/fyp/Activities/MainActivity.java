@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity{
                     newUser[0].child("Gender").setValue(g);
                     newUser[0].child("Total Distance").setValue((double) 0.0);
                     newUser[0].child("Total Runs").setValue((int) 0);
+                    //newUser[0].child("Following").setValue();
 
 
                     onSignupSuccess();

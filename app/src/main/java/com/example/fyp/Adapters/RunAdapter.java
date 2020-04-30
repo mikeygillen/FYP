@@ -45,9 +45,9 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.ViewHolder> {
             Run currentItem = mAllRuns.get(position);
 
             holder.duration.setText(currentItem.getDuration());
-            holder.dist.setText(String.valueOf(Math. round(currentItem.getDistance() / 1000)));
-            holder.pace.setText(String.valueOf(currentItem.getPace()));
-            holder.route.setText(currentItem.getRouteId());
+            holder.dist.setText(Math. round(currentItem.getDistance() / 1000) + "Km");
+            holder.pace.setText(currentItem.getPace() + " min/Km");
+            holder.calories.setText(currentItem.getCalories() + " kcal");
 
         }catch (NullPointerException e){
             Log.e(TAG, "onBindViewHolder: Null Pointer: " + e.getMessage() );
@@ -61,7 +61,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView duration, dist, pace, route;
+        TextView duration, dist, pace, calories;
         OnRunListener onRunListener;
 
         public ViewHolder(View itemView, OnRunListener onRunListener) {
@@ -69,7 +69,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.ViewHolder> {
             duration = itemView.findViewById(R.id.duration);
             dist = itemView.findViewById(R.id.runDistanceView);
             pace = itemView.findViewById(R.id.runPaceView);
-            route = itemView.findViewById(R.id.routeId);
+            calories = itemView.findViewById(R.id.calorie_burned_view);
             this.onRunListener = onRunListener;
 
             itemView.setOnClickListener(this);

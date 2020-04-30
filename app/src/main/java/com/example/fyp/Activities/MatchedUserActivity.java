@@ -35,7 +35,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private int best, worst;
 
     private ArrayList<User> userList = new ArrayList<>();
-    private TextView noData, cDistance, cTotalRuns, cAvgDistance;
+    private TextView noData, cPace, cTotalRuns, cDistance, iPace, iDistance;
     private Button buttonAll, buttonPace, buttonDistance;
 
     private RecyclerView recyclerView;
@@ -49,17 +49,11 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private DatabaseReference mUserFollowing = mUserRef.child("Following");
     private String currentEmail;
 
-    /*private OnFragmentInteractionListener mListener;
-
-     */
-
     public static void setPreferenceValues(int seekDistanceValue, int seekPaceValue) {
         Log.d(TAG, "setPreferenceValues: dis = " + seekDistanceValue +  " pace = " + seekPaceValue);
         distancePreferred = seekDistanceValue;
         pacePreferred = seekDistanceValue;
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,50 +67,50 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         buttonPace = (Button) findViewById(R.id.button_on_pace);
 
         noData = findViewById(R.id.empty_view);
-        cDistance = findViewById(R.id.current_total_distance);
-        cAvgDistance = (TextView) findViewById(R.id.current_avg_distance);
+        cDistance = findViewById(R.id.current_avg_distance);
+        cPace = (TextView) findViewById(R.id.current_avg_pace);
+        iDistance = findViewById(R.id.ideal_avg_distance);
+        iPace = (TextView) findViewById(R.id.ideal_avg_pace);
         cTotalRuns = (TextView) findViewById(R.id.current_total_runs);
 
+        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                currentEmail = snapshot.child("Email").getValue().toString();
+                double dis = new Double(Math.round(Float.parseFloat(snapshot.child("TotalDistance").getValue().toString())));
+                double pace = new Double(Math.round(Float.parseFloat(snapshot.child("AvgPace").getValue().toString())));
+                int runs = new Integer(snapshot.child("TotalRuns").getValue().toString());
+                currentDisAvg = Math.round(dis / runs);
+                currentPaceAvg = Math.round(pace / runs);
+
+                cDistance.setText("Avg. Distance = " + currentDisAvg + "Km");
+                cPace.setText("Avg Pace = " + currentPaceAvg + "min/Km");
+                cTotalRuns.setText("Total Runs = " + runs);
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("The Retrieve User Failed: ");
+            }
+        });
         retrieveUsers();
-        retrieveCurrent();
 
         buttonAll.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                sortPreference();
+                sortPreferencePace();
                 initRecyclerView(userList);
             }
         });
 
         buttonDistance.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                sortPreference();
                 sortDistance();
             }
         });
         buttonPace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                sortPreference();
                 sortPace();
-            }
-        });
-    }
-
-    private void retrieveCurrent() {
-        mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                currentEmail = snapshot.child("Email").getValue().toString();
-                double dis = new Double(Math.round(Float.parseFloat(snapshot.child("Total Distance").getValue().toString())));
-                int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
-                currentDisAvg = Math.round(dis / runs);
-                currentPaceAvg = 10;
-
-                cDistance.setText("Total Distance covered = " + dis + "Km");
-                cAvgDistance.setText("Avg Distance covered = " + currentDisAvg + "Km");
-                cTotalRuns.setText("Total Runs = " + runs);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("The Retrieve User Failed: ");
             }
         });
     }
@@ -131,18 +125,20 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
                             if (!result.child("Email").getValue().toString().equalsIgnoreCase(currentEmail)) {
                                 String name = result.child("Name").getValue().toString();
                                 String email = result.child("Email").getValue().toString();
-                                double dis = new Double(Math.round(Float.parseFloat(result.child("Total Distance").getValue().toString())));
-                                int runs = new Integer(result.child("Total Runs").getValue().toString());
+                                double dis = new Double(Math.round(Float.parseFloat(result.child("TotalDistance").getValue().toString())));
+                                double aPace = new Double(Math.round(Float.parseFloat(result.child("AvgPace").getValue().toString())));;
+                                int runs = new Integer(result.child("TotalRuns").getValue().toString());
                                 double aDistance = Math.round(dis / runs);
-                                double aPace = 10;
 
-                                User user1 = new User(name, dis, aDistance, aPace, runs, email);
+                                Log.d(TAG, "onDataChange: aPace = " + aPace);
+
+                                User user1 = new User(name, email, dis, aDistance, aPace, runs);
                                 userList.add(user1);
-                                Log.d(TAG, "onDataChange: userList - " + userList);
+                                Log.d(TAG, "onDataChange: Pace - " + user1.getPaceAvg());
                             }
                         }catch (NumberFormatException e) {
                             e.printStackTrace();
-                            User user1 = new User("Joe", 1000, 100, 5, 10, "blogs@gmail.com");
+                            User user1 = new User("Joe", "blogs@gmail.com", 1000, 100, 5, 10);
                             Log.d(TAG, "onDataChange: user1 - " + user1.getName());
                             userList.add(user1);
                         }
@@ -156,48 +152,55 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
             });
         initRecyclerView(userList);
         Log.d(TAG, "retrieveUsers: ending");
+
     }
 
 
     private void sortPreference() {
+        Log.d(TAG, "sortPreference: disPref = " + distancePreferred);
+        Log.d(TAG, "sortPreference: currentDisAvg = " + currentDisAvg);
+        double percent = ((distancePreferred-100)/2);
         if(100 < distancePreferred) {
-            int percent = ((distancePreferred-100)/2) /100;
-            best = (int) (currentDisAvg * percent);
+            best = (int) (currentDisAvg * (1+ (percent/100)));
             worst = (int) currentDisAvg;
         } else if(distancePreferred == 100) {
             best = (int) ((int) currentDisAvg * 1.1);
             worst = (int) ((int) currentDisAvg * 0.9);
         } else{
-            int percent = ((distancePreferred-100)/2) /100;
-            best = (int) (currentDisAvg*percent);
+            best = (int) (currentDisAvg * (percent/100));
             worst = (int) currentDisAvg;
         }
+        iDistance.setText(worst + " - " + best + " Km");
         Log.d(TAG, "sortPreference: Best = " + best + "\n Worst = " + worst);
     }
     private void sortPreferencePace() {
+        Log.d(TAG, "sortPreference: pacePref = " + pacePreferred);
+        Log.d(TAG, "sortPreference: currentPaceAvg = " + currentPaceAvg);
+        double percent = ((pacePreferred-100)/2);
         if(100 < pacePreferred) {
-            int percent = ((pacePreferred-100)/2) /100;
-            best = (int) (currentPaceAvg * percent);
+            best = (int) (currentPaceAvg * (1+ (percent/100)));
             worst = (int) currentPaceAvg;
         } else if(pacePreferred == 100) {
             best = (int) ((int) currentPaceAvg * 1.1);
             worst = (int) ((int) currentPaceAvg * 0.9);
         } else{
-            int percent = ((pacePreferred-100)/2) /100;
-            best = (int) (currentPaceAvg*percent);
+            best = (int) (currentPaceAvg * (percent/100));
             worst = (int) currentPaceAvg;
         }
+        iPace.setText(worst + " - " + best + " min/Km");
         Log.d(TAG, "sortPreferencePace: Best = " + best + "\n Worst = " + worst);
     }
 
     private void sortDistance() {
         Log.d(TAG, "filterDistance Begin");
         ArrayList<User> mFilterList = new ArrayList<>();
+        Log.d(TAG, "sortPreference: Best = " + best + "\n Worst = " + worst);
 
         for(User user : userList){
             Log.d(TAG, "sortDistance: User Avg. = " + user.getDistanceAvg());
-            if (worst < user.getDistanceAvg() && user.getDistanceAvg() < best){
+            if (worst <= user.getDistanceAvg()  && user.getDistanceAvg() <= best){
                 mFilterList.add(user);
+                Log.d(TAG, "sortDistance: mFilterList = " + mFilterList);
             }
         }
         initRecyclerView(mFilterList);
@@ -206,9 +209,11 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private void sortPace() {
         Log.d(TAG, "filterPace Begin");
         ArrayList<User> mFilterList = new ArrayList<>();
+        Log.d(TAG, "sortPreferencePace: Best = " + best + "\n Worst = " + worst);
+
         for(User user : userList){
             Log.d(TAG, "sortDistance: User Avg. = " + user.getPaceAvg());
-            if (worst < user.getPaceAvg() && user.getPaceAvg() < best){
+            if (worst <= user.getPaceAvg() && user.getPaceAvg() <= best){
                 mFilterList.add(user);
             }
         }
@@ -222,8 +227,8 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         Log.d(TAG, "initRecyclerView: ArrayList = " + list);
         recyclerView = findViewById(R.id.userRecyclerView);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(this);  //CHANGED FROM getActivity()
-        adapter = new UserAdapter(list, this);  //CHANGED FROM this
+        layoutManager = new LinearLayoutManager(this);
+        adapter = new UserAdapter(list, this);
 
         //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
         //mRecyclerView.addItemDecoration(itemDecorator);

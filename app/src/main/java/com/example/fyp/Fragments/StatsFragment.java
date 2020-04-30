@@ -22,11 +22,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fyp.Maps.HomePageActivity;
 import com.example.fyp.Adapters.RunAdapter;
 import com.example.fyp.Classes.Run;
-import com.example.fyp.Graphs.LineChartActivity;
 import com.example.fyp.Graphs.PieChartActivity;
+import com.example.fyp.Maps.HomePageActivity;
 import com.example.fyp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -131,19 +130,11 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(getActivity(), R.array.personal_filter, android.R.layout.simple_spinner_item);
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         filter1.setAdapter(adapter1);
-/*
-        filter2 = (Spinner) v.findViewById(R.id.progression_filter);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.progression_filter, android.R.layout.simple_spinner_item);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        filter2.setAdapter(adapter2);
-
- */
 
         retrieveUserInfo();
         retrieveRuns();
         setFurthestShortest();
 
-        //btnLineChart = v.findViewById(R.id.btnLineChart);
         btnPieChart = v.findViewById(R.id.btnPieChart);
 
         btnPieChart.setOnClickListener(new View.OnClickListener() {
@@ -173,32 +164,6 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                     intent.putExtra("user_days", getDays());
                     startActivity(intent);
                 }
-            }
-        });
-
-        btnLineChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String f;
-                if (filter2 != null && filter2.getSelectedItem() != null) {
-                    f = (String) filter2.getSelectedItem();
-                    Log.d(TAG, "onClick: LineChart = " + f);
-                } else {
-                    f = "Null";
-                }
-                if (f.equals("Distances")) {
-                    Intent intent = new Intent(getActivity(), LineChartActivity.class);
-                    intent.putExtra("user_distances", getDistances());
-                    intent.putExtra("user_days", getDays());
-                    startActivity(intent);
-                } else if (f.equals("Pace")) {
-                    //barChartPace();
-                } else if (f.equals("Run Times")) {
-                    //  barChartTimes();
-                } else if (f.equals("Days Ran")) {
-                    //  barChartDays();
-                }
-
             }
         });
 
@@ -262,13 +227,13 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
-                    double dis = new Double(Math. round(Float.parseFloat(snapshot.child("Total Distance").getValue().toString())));
-                    int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
+                    double dis = new Double(Math. round(Float.parseFloat(snapshot.child("TotalDistance").getValue().toString())));
+                    int runs = new Integer(snapshot.child("TotalRuns").getValue().toString());
                     double aDistance = Math. round(dis/runs);
-                    double cal = new Double(Math. round(Float.parseFloat(snapshot.child("Total Calories").getValue().toString())));
+                    double cal = new Double(Math. round(Float.parseFloat(snapshot.child("TotalCalories").getValue().toString())));
 
                     tDistanceView.setText(dis + " Km");
-                    tRunsView.setText(snapshot.child("Total Runs").getValue().toString() + " Workouts");
+                    tRunsView.setText(snapshot.child("TotalRuns").getValue().toString() + " Workouts");
                     aDistanceView.setText(aDistance + " Km");
                     tCalories.setText(cal + " Calories");
 
