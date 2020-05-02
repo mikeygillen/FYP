@@ -8,86 +8,103 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp">
+        android:background="#C8FFFFFF"
+        android:padding="10dp">
 
         <LinearLayout
             android:id="@+id/nameLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:fadingEdge="vertical">
             <TextView
                 android:id="@+id/userNameView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:textColor="#FFFFFF"
                 android:text="name" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/totalDistanceLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/nameLayout"
+            android:gravity="center"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total distance - " />
+                android:text="Total distance - "
+                android:textColor="#000000" />
             <TextView
                 android:id="@+id/totalDistanceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:text="Km"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/avgDistanceLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_below="@+id/totalDistanceLayout"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:text="Average distance - " />
             <TextView
                 android:id="@+id/avgDistanceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:text="Km"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/avgPaceLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_below="@+id/avgDistanceLayout"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:text="Average Pace - " />
             <TextView
                 android:id="@+id/avgPaceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:text="min per Km" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_below="@+id/avgPaceLayout"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:text="Total Runs - " />
             <TextView
                 android:id="@+id/totalRunsView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#000000"
                 android:text="total" />
         </LinearLayout>
 
