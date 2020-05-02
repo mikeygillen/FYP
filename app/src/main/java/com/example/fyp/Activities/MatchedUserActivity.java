@@ -105,11 +105,13 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
 
         buttonDistance.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                sortPreference();
                 sortDistance();
             }
         });
         buttonPace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                sortPreferencePace();
                 sortPace();
             }
         });
@@ -159,16 +161,20 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private void sortPreference() {
         Log.d(TAG, "sortPreference: disPref = " + distancePreferred);
         Log.d(TAG, "sortPreference: currentDisAvg = " + currentDisAvg);
-        double percent = ((distancePreferred-100)/2);
         if(100 < distancePreferred) {
+            double percent = ((distancePreferred-100)/2);
             best = (int) (currentDisAvg * (1+ (percent/100)));
             worst = (int) currentDisAvg;
         } else if(distancePreferred == 100) {
             best = (int) ((int) currentDisAvg * 1.1);
             worst = (int) ((int) currentDisAvg * 0.9);
+        } else if (distancePreferred == 0){
+            worst = (int) (currentDisAvg * 0.5);
+            best = (int) currentDisAvg;
         } else{
-            best = (int) (currentDisAvg * (percent/100));
-            worst = (int) currentDisAvg;
+            double percent = (distancePreferred/2);
+            worst = (int) (currentDisAvg * (percent/100));
+            best = (int) currentDisAvg;
         }
         iDistance.setText(worst + " - " + best + " Km");
         Log.d(TAG, "sortPreference: Best = " + best + "\n Worst = " + worst);
@@ -176,16 +182,20 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private void sortPreferencePace() {
         Log.d(TAG, "sortPreference: pacePref = " + pacePreferred);
         Log.d(TAG, "sortPreference: currentPaceAvg = " + currentPaceAvg);
-        double percent = ((pacePreferred-100)/2);
         if(100 < pacePreferred) {
-            best = (int) (currentPaceAvg * (1+ (percent/100)));
+            double percent = ((pacePreferred-100)/2);
+            best = (int) (currentPaceAvg * (1 + (percent/100)));
             worst = (int) currentPaceAvg;
         } else if(pacePreferred == 100) {
             best = (int) ((int) currentPaceAvg * 1.1);
             worst = (int) ((int) currentPaceAvg * 0.9);
+        } else if (pacePreferred == 0){
+            worst = (int) (currentPaceAvg * 0.5);
+            best = (int) currentPaceAvg;
         } else{
-            best = (int) (currentPaceAvg * (percent/100));
-            worst = (int) currentPaceAvg;
+            double percent = (pacePreferred/2);
+            worst = (int) (currentPaceAvg * (percent/100));
+            best = (int) currentPaceAvg;
         }
         iPace.setText(worst + " - " + best + " min/Km");
         Log.d(TAG, "sortPreferencePace: Best = " + best + "\n Worst = " + worst);
@@ -197,7 +207,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         Log.d(TAG, "sortPreference: Best = " + best + "\n Worst = " + worst);
 
         for(User user : userList){
-            Log.d(TAG, "sortDistance: User Avg. = " + user.getDistanceAvg());
+            Log.d(TAG, "sortDistance: User Distance Avg. = " + user.getDistanceAvg());
             if (worst <= user.getDistanceAvg()  && user.getDistanceAvg() <= best){
                 mFilterList.add(user);
                 Log.d(TAG, "sortDistance: mFilterList = " + mFilterList);
@@ -212,7 +222,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         Log.d(TAG, "sortPreferencePace: Best = " + best + "\n Worst = " + worst);
 
         for(User user : userList){
-            Log.d(TAG, "sortDistance: User Avg. = " + user.getPaceAvg());
+            Log.d(TAG, "sortDistance: User Pace Avg. = " + user.getPaceAvg());
             if (worst <= user.getPaceAvg() && user.getPaceAvg() <= best){
                 mFilterList.add(user);
             }
@@ -243,6 +253,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
 
     @Override
     public void onUserClick(int position) {
+        Log.d(TAG, "onUserClick: user = " + adapter.getItemId(position));
         Toast.makeText(this, "Item clicked" + userList.get(position).getName(), Toast.LENGTH_LONG).show();
     }
 
