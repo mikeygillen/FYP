@@ -232,9 +232,9 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
                     double aDistance = Math. round(dis/runs);
                     double cal = new Double(Math. round(Float.parseFloat(snapshot.child("TotalCalories").getValue().toString())));
 
-                    tDistanceView.setText(dis + " Km");
+                    tDistanceView.setText(dis + " Meter");
                     tRunsView.setText(snapshot.child("TotalRuns").getValue().toString() + " Workouts");
-                    aDistanceView.setText(aDistance + " Km");
+                    aDistanceView.setText(aDistance + " Meter");
                     tCalories.setText(cal + " Calories");
 
                 } catch (Exception e) {

@@ -67,7 +67,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
 
                 }
             });
-            holder.dist.setText(Math.round(currentItem.getDistance()) + "Km");  //Add /1000 when finished to get in km not m
+            holder.dist.setText(Math.round(currentItem.getDistance()) + " Meters");  //Add /1000 when finished to get in km not m
             holder.created.setText(currentItem.getCreatedOn());
 
         holder.start.setText(currentItem.getStart());

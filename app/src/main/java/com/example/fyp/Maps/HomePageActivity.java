@@ -239,7 +239,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(HomePageActivity.this);
             alertDialogBuilder.setTitle("Workout Finished");
-            alertDialogBuilder.setMessage("Are you happy with your workout?" + "\n Distance Covered = " + d + "Km" + "\n Time = " + t + "\n Pace = " + p + "min/Km" + "\n Calories Burned = " + c);
+            alertDialogBuilder.setMessage("Are you happy with your workout?" + "\n Distance Covered = " + d + "m" + "\n Time = " + t + "\n Pace = " + p + "min/Km" + "\n Calories Burned = " + c);
             alertDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -267,7 +267,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                             }
                         });
                         Log.d(TAG, "Route Tracking Finished");
-                        Toast.makeText(getApplication(), "Workout complete! \n Distance Covered = " + d + "Km", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplication(), "Workout complete! \n Distance Covered = " + d + "m", Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getApplication(), "Problem creating run.", Toast.LENGTH_LONG).show();
@@ -344,7 +344,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         }
 
         Log.d(TAG, "calculateCalorie: calories = " + calories);
-        return Math.round(calories);
+        return Math.round(calories/1000);
     }
 
     private boolean loadFragment(Fragment fragment) {

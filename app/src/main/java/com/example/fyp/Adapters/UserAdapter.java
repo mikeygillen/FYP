@@ -43,8 +43,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         //holder.dist.setText(String.valueOf(Math.round(currentItem.getDistance())));  //Add /1000 when finished to get in km not m
         holder.name.setText(currentItem.getName());
-        holder.tDis.setText(Math.round(currentItem.getDistanceCovered()) + "Km");
-        holder.aDis.setText(Math.round(currentItem.getDistanceAvg()) + "Km per Run");
+        holder.tDis.setText(Math.round(currentItem.getDistanceCovered()) + "Meter");
+        holder.aDis.setText(Math.round(currentItem.getDistanceAvg()) + "m per Run");
         holder.aPace.setText(Math.round(currentItem.getPaceAvg()) + "Min per Km");
         holder.tRuns.setText(String.valueOf(currentItem.getTotalRuns()));
     }
