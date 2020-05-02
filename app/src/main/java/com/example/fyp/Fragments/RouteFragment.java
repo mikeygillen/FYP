@@ -182,7 +182,7 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
                     String endAddress = addresses.get(0).getAddressLine(0);
 
                     Route route1 = new Route(distance, routePoints, user, created, startAddress, endAddress);
-                    Log.d(TAG, "onDataChange: route1 - " + route1.getLocations());
+                    //Log.d(TAG, "onDataChange: route1 - " + route1.getLocations());
                     routeList.add(route1);
                 }
             }
@@ -225,8 +225,6 @@ public class RouteFragment extends Fragment implements Interface, RouteAdapter.O
         mLayoutManager = new LinearLayoutManager(getActivity());
         mAdapter = new RouteAdapter(list, this);
 
-        //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
-        //mRecyclerView.addItemDecoration(itemDecorator);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
 
         mRecyclerView.setLayoutManager(mLayoutManager);

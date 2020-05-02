@@ -55,7 +55,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
                     try {
                         String name = snapshot.child("Name").getValue().toString();
                         Log.d(TAG, "onDataChange: Name = " + name);
-                        holder.user.setText(name);
+                        holder.user.setText(",   by " + name);
                     } catch (Exception e) {
                         e.printStackTrace();
                         String name = "Anonymous User";

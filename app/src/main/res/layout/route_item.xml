@@ -3,89 +3,87 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="15dp"
-    android:padding="15dp">
+    app:cardCornerRadius="20dp"
+    android:padding="20dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp">
-
-    <LinearLayout
-        android:id="@+id/dateLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Route created on " />
-        <TextView
-            android:id="@+id/createdOnDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date" />
-    </LinearLayout>
+        android:background="#C8FFFFFF"
+        android:padding="10dp">
 
         <LinearLayout
             android:id="@+id/distanceLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/dateLayout"
-            android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Route distance - "
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:fadingEdge="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Route distance - "
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
             <TextView
                 android:id="@+id/routeDistanceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:text="Km"/>
-    </LinearLayout>
+                android:text="Km"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/createdByLayout"
+    <LinearLayout
+        android:id="@+id/dateLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@+id/distanceLayout"
+        android:orientation="horizontal">
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/distanceLayout"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Created by - " />
-            <TextView
-                android:id="@+id/createdById"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:text="User Id here"
-                android:textSize="15sp"
-                android:layout_marginLeft="8dp" />
-        </LinearLayout>
+            android:text="Route created on "
+            android:textColor="#000000" />
+        <TextView
+            android:id="@+id/createdOnDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textColor="#000000" />
+        <TextView
+            android:id="@+id/createdById"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User Id here"
+            android:textSize="15sp"
+            android:layout_marginLeft="8dp"
+            android:textColor="#000000"/>
+    </LinearLayout>
 
         <LinearLayout
             android:id="@+id/startPointLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/createdByLayout"
+            android:layout_below="@+id/dateLayout"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Start Point - " />
+                android:text="Start Point - "
+                android:textColor="#000000"/>
             <TextView
                 android:id="@+id/startPointView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:text="start"
                 android:textSize="15sp"
-                android:layout_marginLeft="8dp" />
+                android:layout_marginLeft="8dp"
+                android:textColor="#000000" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -95,15 +93,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="End Point - " />
+                android:text="End Point - "
+                android:textColor="#000000" />
             <TextView
                 android:id="@+id/endPointView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:text="End"
                 android:textSize="15sp"
-                android:layout_marginLeft="8dp" />
+                android:layout_marginLeft="8dp"
+                android:textColor="#000000"/>
         </LinearLayout>
 
     </RelativeLayout>
