@@ -35,6 +35,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private int best, worst;
 
     private ArrayList<User> userList = new ArrayList<>();
+    private ArrayList<User> mFilterList = new ArrayList<>();
     private TextView noData, cPace, cTotalRuns, cDistance, iPace, iDistance;
     private Button buttonAll, buttonPace, buttonDistance;
 
@@ -60,7 +61,6 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_matched_user);
         userList.clear();
-        //String userKey =  UserRefs.push().getKey();
 
         buttonAll = (Button) findViewById(R.id.button_all_users);
         buttonDistance = (Button) findViewById(R.id.button_on_distance);
@@ -97,6 +97,8 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
 
         buttonAll.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                mFilterList.clear();
+                mFilterList = (ArrayList<User>) userList.clone();
                 sortPreference();
                 sortPreferencePace();
                 initRecyclerView(userList);
@@ -105,14 +107,18 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
 
         buttonDistance.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                mFilterList.clear();
                 sortPreference();
                 sortDistance();
+                initRecyclerView(mFilterList);
             }
         });
         buttonPace.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
+                mFilterList.clear();
                 sortPreferencePace();
                 sortPace();
+                initRecyclerView(mFilterList);
             }
         });
     }
@@ -152,15 +158,12 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
                     System.out.println("The Retrieve User Failed: ");
                 }
             });
-        initRecyclerView(userList);
         Log.d(TAG, "retrieveUsers: ending");
 
     }
 
 
     private void sortPreference() {
-        Log.d(TAG, "sortPreference: disPref = " + distancePreferred);
-        Log.d(TAG, "sortPreference: currentDisAvg = " + currentDisAvg);
         if(100 < distancePreferred) {
             double percent = ((distancePreferred-100)/2);
             best = (int) (currentDisAvg * (1+ (percent/100)));
@@ -180,8 +183,6 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         Log.d(TAG, "sortPreference: Best = " + best + "\n Worst = " + worst);
     }
     private void sortPreferencePace() {
-        Log.d(TAG, "sortPreference: pacePref = " + pacePreferred);
-        Log.d(TAG, "sortPreference: currentPaceAvg = " + currentPaceAvg);
         if(100 < pacePreferred) {
             double percent = ((pacePreferred-100)/2);
             best = (int) (currentPaceAvg * (1 + (percent/100)));
@@ -203,9 +204,6 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
 
     private void sortDistance() {
         Log.d(TAG, "filterDistance Begin");
-        ArrayList<User> mFilterList = new ArrayList<>();
-        Log.d(TAG, "sortPreference: Best = " + best + "\n Worst = " + worst);
-
         for(User user : userList){
             Log.d(TAG, "sortDistance: User Distance Avg. = " + user.getDistanceAvg());
             if (worst <= user.getDistanceAvg()  && user.getDistanceAvg() <= best){
@@ -213,21 +211,16 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
                 Log.d(TAG, "sortDistance: mFilterList = " + mFilterList);
             }
         }
-        initRecyclerView(mFilterList);
     }
 
     private void sortPace() {
         Log.d(TAG, "filterPace Begin");
-        ArrayList<User> mFilterList = new ArrayList<>();
-        Log.d(TAG, "sortPreferencePace: Best = " + best + "\n Worst = " + worst);
-
         for(User user : userList){
             Log.d(TAG, "sortDistance: User Pace Avg. = " + user.getPaceAvg());
             if (worst <= user.getPaceAvg() && user.getPaceAvg() <= best){
                 mFilterList.add(user);
             }
         }
-        initRecyclerView(mFilterList);
     }
 
 
@@ -239,9 +232,6 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         adapter = new UserAdapter(list, this);
-
-        //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
-        //mRecyclerView.addItemDecoration(itemDecorator);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
         recyclerView.setLayoutManager(layoutManager);
@@ -253,8 +243,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
 
     @Override
     public void onUserClick(int position) {
-        Log.d(TAG, "onUserClick: user = " + adapter.getItemId(position));
-        Toast.makeText(this, "Item clicked" + userList.get(position).getName(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Item clicked" + mFilterList.get(position).getName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -273,10 +262,10 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
             Log.e(TAG, "onSwiped swiped to view");
             int position = viewHolder.getPosition();
 
-            final String newFollower = userList.get(position).getEmail();
+            final String newFollower = mFilterList.get(position).getEmail();
             mUserRef.child("Following").setValue(newFollower);
 
-            Toast.makeText(getApplication(), newFollower + " Followed", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplication(), newFollower + " Followed", Toast.LENGTH_SHORT).show();
         }
     };
 
