@@ -76,10 +76,14 @@ public class PieChartActivity extends AppCompatActivity {
                 o = o + 1;
             }
         }
-        pieEntries.add(new PieEntry(u, under));
-        pieEntries.add(new PieEntry(f, five));
-        pieEntries.add(new PieEntry(t, ten));
-        pieEntries.add(new PieEntry(o, over));
+        if (u !=0){
+            pieEntries.add(new PieEntry(u, under)); }
+        if (f !=0){
+            pieEntries.add(new PieEntry(f, five)); }
+        if (t !=0){
+            pieEntries.add(new PieEntry(t, ten)); }
+        if (o !=0){
+            pieEntries.add(new PieEntry(o, over));}
 
         return pieEntries;
     }
@@ -103,11 +107,16 @@ public class PieChartActivity extends AppCompatActivity {
             }else{
                 o = o + 1;
             }
+
         }
-        pieEntries.add(new PieEntry(u, under));
-        pieEntries.add(new PieEntry(f, five));
-        pieEntries.add(new PieEntry(t, ten));
-        pieEntries.add(new PieEntry(o, over));
+        if (u !=0){
+        pieEntries.add(new PieEntry(u, under)); }
+        if (f !=0){
+        pieEntries.add(new PieEntry(f, five)); }
+        if (t !=0){
+        pieEntries.add(new PieEntry(t, ten)); }
+        if (o !=0){
+        pieEntries.add(new PieEntry(o, over));}
 
         return pieEntries;
     }
@@ -134,10 +143,14 @@ public class PieChartActivity extends AppCompatActivity {
             }
 
         }
-        pieEntries.add(new PieEntry(u, under));
-        pieEntries.add(new PieEntry(f, ten));
-        pieEntries.add(new PieEntry(t, twenty));
-        pieEntries.add(new PieEntry(o, over));
+        if (u !=0){
+        pieEntries.add(new PieEntry(u, under)); }
+        if (f !=0){
+        pieEntries.add(new PieEntry(f, ten)); }
+        if (t !=0){
+        pieEntries.add(new PieEntry(t, twenty)); }
+        if (o !=0) {
+            pieEntries.add(new PieEntry(o, over)); }
 
         return pieEntries;
     }
@@ -172,13 +185,20 @@ public class PieChartActivity extends AppCompatActivity {
                     su = su + 1;
                 }
             }
-            pieEntries.add(new PieEntry(m, monday));
-            pieEntries.add(new PieEntry(t, tuesday));
-            pieEntries.add(new PieEntry(w, wednesday));
-            pieEntries.add(new PieEntry(th, thursday));
-            pieEntries.add(new PieEntry(f, friday));
-            pieEntries.add(new PieEntry(s, saturday));
-            pieEntries.add(new PieEntry(su, sunday));
+            if(m != 0){
+            pieEntries.add(new PieEntry(m, monday));}
+        if(t != 0){
+            pieEntries.add(new PieEntry(t, tuesday));}
+            if(w != 0){
+            pieEntries.add(new PieEntry(w, wednesday));}
+                if(th != 0){
+            pieEntries.add(new PieEntry(th, thursday));}
+                    if(f != 0){
+            pieEntries.add(new PieEntry(f, friday));}
+                        if(s != 0){
+            pieEntries.add(new PieEntry(s, saturday));}
+                            if(su != 0){
+            pieEntries.add(new PieEntry(su, sunday));}
 
             return pieEntries;
         }
