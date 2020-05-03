@@ -77,9 +77,9 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 currentEmail = snapshot.child("Email").getValue().toString();
-                double dis = new Double(Math.round(Float.parseFloat(snapshot.child("TotalDistance").getValue().toString())));
+                double dis = new Double(Math.round(Float.parseFloat(snapshot.child("Total Distance").getValue().toString())));
                 double pace = new Double(Math.round(Float.parseFloat(snapshot.child("AvgPace").getValue().toString())));
-                int runs = new Integer(snapshot.child("TotalRuns").getValue().toString());
+                int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
                 currentDisAvg = Math.round(dis / runs);
                 currentPaceAvg = Math.round(pace / runs);
 
@@ -133,9 +133,9 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
                             if (!result.child("Email").getValue().toString().equalsIgnoreCase(currentEmail)) {
                                 String name = result.child("Name").getValue().toString();
                                 String email = result.child("Email").getValue().toString();
-                                double dis = new Double(Math.round(Float.parseFloat(result.child("TotalDistance").getValue().toString())));
+                                double dis = new Double(Math.round(Float.parseFloat(result.child("Total Distance").getValue().toString())));
                                 double aPace = new Double(Math.round(Float.parseFloat(result.child("AvgPace").getValue().toString())));;
-                                int runs = new Integer(result.child("TotalRuns").getValue().toString());
+                                int runs = new Integer(result.child("Total Runs").getValue().toString());
                                 double aDistance = Math.round(dis / runs);
 
                                 Log.d(TAG, "onDataChange: aPace = " + aPace);

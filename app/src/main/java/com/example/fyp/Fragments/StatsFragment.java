@@ -227,13 +227,13 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
-                    double dis = new Double(Math. round(Float.parseFloat(snapshot.child("TotalDistance").getValue().toString())));
-                    int runs = new Integer(snapshot.child("TotalRuns").getValue().toString());
+                    double dis = new Double(Math. round(Float.parseFloat(snapshot.child("Total Distance").getValue().toString())));
+                    int runs = new Integer(snapshot.child("Total Runs").getValue().toString());
                     double aDistance = Math. round(dis/runs);
-                    double cal = new Double(Math. round(Float.parseFloat(snapshot.child("TotalCalories").getValue().toString())));
+                    double cal = new Double(Math. round(Float.parseFloat(snapshot.child("Total Calories").getValue().toString())));
 
                     tDistanceView.setText(dis + " Meter");
-                    tRunsView.setText(snapshot.child("TotalRuns").getValue().toString() + " Workouts");
+                    tRunsView.setText(snapshot.child("Total Runs").getValue().toString() + " Workouts");
                     aDistanceView.setText(aDistance + " Meter");
                     tCalories.setText(cal + " Calories");
 
@@ -269,8 +269,6 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
 
                             Run run1 = new Run(duration, distance, pace, userId, createdOn);
                             runList.add(run1);
-
-                            Log.d(TAG, "onDataChange: run1 = " + run1.getCreatedOn());
                         }
                     } catch (Exception e) {
                         Log.d(TAG, "onDataChange: FAILED" + e);
@@ -286,36 +284,6 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
             }
         });
     }
-
-
-
-    /* private void filterRuns() {
-        Log.d(TAG, "filterRuns Begin");
-        ArrayList<Run> mFilterList = new ArrayList<>();
-        for(Run run : runList) {
-            if(!run.getUserId().equals(currentUserId)) {
-                mFilterList.add(run);
-            }
-        }
-        initRecyclerView(mFilterList);
-    }
-
-
-   private void initRecyclerView(ArrayList<Run> list){
-        mRecyclerView = v.findViewById(R.id.runRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mRunAdapter = new RunAdapter(list, this);
-
-        //VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(10);
-        //mRecyclerView.addItemDecoration(itemDecorator);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(mRecyclerView);
-
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mRunAdapter);
-    }*/
-
-
 
     @Override
     public void onClick(View v) {
@@ -333,30 +301,6 @@ public class StatsFragment extends Fragment implements RunAdapter.OnRunListener,
         Intent intent = new Intent(getActivity(), HomePageActivity.class);
         startActivity(intent);
     }
-
-
-    /*
-    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            Log.e(TAG, "onSwiped swiped to delete");
-            //deleteRun(runList.get(viewHolder.getAdapterPosition()));
-        }
-    };
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-     */
 
     @Override
     public void onAttach(Context context) {
