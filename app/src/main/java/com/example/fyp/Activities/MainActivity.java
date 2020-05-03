@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity{
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                    newUser[0].child("Birth Date").setValue(d);
+                    newUser[0].child("DOB").setValue(d);
                     newUser[0].child("Gender").setValue(g);
                     newUser[0].child("Total Distance").setValue((double) 0.0);
                     newUser[0].child("Total Runs").setValue((int) 0);
