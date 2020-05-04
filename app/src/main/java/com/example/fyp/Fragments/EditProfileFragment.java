@@ -2,6 +2,7 @@ package com.example.fyp.Fragments;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -192,13 +194,31 @@ public class EditProfileFragment extends Fragment {
         }
 
         if (validate()) {
-            Log.d(TAG, "Update details with password:success");
-            btnupdate.setEnabled(true);
 
-            mRef.child("Height").setValue(h);
-            mRef.child("Weight").setValue(w);
-            mRef.child("Birth Date").setValue(d);
-            mRef.child("Gender").setValue(g);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle("Warning");
+            alertDialogBuilder.setMessage("Are you sure you want to update details?");
+            alertDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.d(TAG, "Update details:success");
+                            btnupdate.setEnabled(true);
+
+                            mRef.child("Height").setValue(h);
+                            mRef.child("Weight").setValue(w);
+                            mRef.child("Birth Date").setValue(d);
+                            mRef.child("Gender").setValue(g);
+                        }
+                    });
+
+            alertDialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(getActivity(), "Changes Discarded", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            alertDialogBuilder.create().show();
+
         } else {
             Log.w(TAG, "Update details with password:failure");
             onUpdateFailed();
