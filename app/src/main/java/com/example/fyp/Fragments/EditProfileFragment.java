@@ -204,6 +204,7 @@ public class EditProfileFragment extends Fragment {
                             Log.d(TAG, "Update details:success");
                             btnupdate.setEnabled(true);
 
+
                             mRef.child("Height").setValue(h);
                             mRef.child("Weight").setValue(w);
                             mRef.child("Birth Date").setValue(d);
