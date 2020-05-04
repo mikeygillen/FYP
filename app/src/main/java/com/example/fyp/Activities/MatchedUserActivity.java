@@ -83,7 +83,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
                 currentDisAvg = Math.round(dis / runs);
                 currentPaceAvg = Math.round(pace / runs);
 
-                cDistance.setText("Avg. Distance = " + currentDisAvg + "Km");
+                cDistance.setText("Avg. Distance = " + currentDisAvg + "Meters");
                 cPace.setText("Avg Pace = " + currentPaceAvg + "min/Km");
                 cTotalRuns.setText("Total Runs = " + runs);
 
@@ -179,7 +179,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
             worst = (int) (currentDisAvg * (percent/100));
             best = (int) currentDisAvg;
         }
-        iDistance.setText(worst + " - " + best + " Km");
+        iDistance.setText(worst + " - " + best + " Meters");
         Log.d(TAG, "sortPreference: Best = " + best + "\n Worst = " + worst);
     }
     private void sortPreferencePace() {

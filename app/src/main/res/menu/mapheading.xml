@@ -7,46 +7,47 @@
         android:title="Marker"
         app:showAsAction="always"/>
 
+    <!--
     <item android:id="@+id/heatmap"
         android:icon="@drawable/ic_heatmap"
         android:title="Heatmap"
-        app:showAsAction="always" />
+        app:showAsAction="always" /> -->
 
     <item android:id="@+id/fingal"
         android:title="Fingal"
         app:showAsAction="never">
         <menu>
-            <item android:id="@+id/heatmapfingal"
-                android:title="Heatmap"/>
-            <item android:id="@+id/markerfingal"
-                android:title="Marker"/>
-        </menu>
-    </item>
+            <!-- <item android:id="@+id/heatmapfingal"
+                 android:title="Heatmap"/> -->
+             <item android:id="@+id/markerfingal"
+                 android:title="Marker"/>
+         </menu>
+     </item>
 
-    <item android:id="@+id/city"
-        android:title="City Centre"
-        app:showAsAction="never">
-        <menu>
-            <item android:id="@+id/heatmapcity"
-                android:title="Heatmap"/>
-            <item android:id="@+id/markercity"
-                android:title="Marker"/>
-        </menu>
-    </item>
+     <item android:id="@+id/city"
+         android:title="City Centre"
+         app:showAsAction="never">
+         <menu>
+            <!-- <item android:id="@+id/heatmapcity"
+                 android:title="Heatmap"/> -->
+             <item android:id="@+id/markercity"
+                 android:title="Marker"/>
+         </menu>
+     </item>
 
-    <item android:id="@+id/south"
-        android:title="South Dublin"
-        app:showAsAction="never">
-        <menu>
-            <item android:id="@+id/heatmapsouth"
-                android:title="Heatmap"/>
-            <item android:id="@+id/markersouth"
-                android:title="Marker"/>
-        </menu>
-    </item>
+     <item android:id="@+id/south"
+         android:title="South Dublin"
+         app:showAsAction="never">
+         <menu>
+           <!--  <item android:id="@+id/heatmapsouth"
+                 android:title="Heatmap"/> -->
+             <item android:id="@+id/markersouth"
+                 android:title="Marker"/>
+         </menu>
+     </item>
 
-    <item android:id="@+id/logout"
-        android:icon="@drawable/ic_logout"
-        android:title="Logout"
-        app:showAsAction="never"/>
-</menu>
+     <item android:id="@+id/logout"
+         android:icon="@drawable/ic_logout"
+         android:title="Logout"
+         app:showAsAction="never"/>
+ </menu>

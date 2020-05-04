@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -67,7 +68,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -396,24 +396,11 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 showNearbyLights();
                 Toast.makeText(this, "Display nearby streetlight locations", Toast.LENGTH_SHORT).show();
                 return true;
-            case R.id.heatmap:
-                showNearbyHeatmap();
-                Toast.makeText(this, "Display heat map of nearby streetlights", Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.heatmapfingal:
-                heatmap("fingal.json");
-                return true;
             case R.id.markerfingal:
                 marker("fingal.json");
                 return true;
-            case R.id.heatmapcity:
-                heatmap("dublin.json");
-                return true;
             case R.id.markercity:
                 marker("dublin.json");
-                return true;
-            case R.id.heatmapsouth:
-                heatmap("south.json");
                 return true;
             case R.id.markersouth:
                 marker("south.json");
@@ -422,11 +409,28 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                 firebaseAuth.signOut();
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
+
+        /*    case R.id.heatmap:
+                showNearbyHeatmap();
+                Toast.makeText(this, "Display heat map of nearby streetlights", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.heatmapfingal:
+                heatmap("fingal.json");
+                return true;
+            case R.id.heatmapcity:
+                heatmap("dublin.json");
+                return true;
+            case R.id.heatmapsouth:
+                heatmap("south.json");
+                return true;
+
+         */
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    /*
     public void heatmap(String json){
         List<LatLng> list = null;
         try {
@@ -458,8 +462,11 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         }
     }
 
+     */
+
     public void showNearbyLights() {
         Log.d(TAG, "showNearbyLights: Beginning");
+        mMap.clear();
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.ic_light);
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, 35, 35, false);
         BitmapDescriptor smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker);
@@ -489,7 +496,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
     public void marker(String json) {
         Log.d(TAG, "show Lights For Specific Region: Beginning");
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.ic_light);
-        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 100, 100, false);
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, 35, 35, false);
         BitmapDescriptor smallMarkerIcon = BitmapDescriptorFactory.fromBitmap(smallMarker);
 
         List<LatLng> list = null;
@@ -567,6 +574,10 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
         Log.d(TAG, "mapRoute beginning.... ");
         LatLng start = routePoints.get(0);
         LatLng end = routePoints.get(routePoints.size()-1);
+
+        currentLocation = new Location(LocationManager.GPS_PROVIDER);
+        currentLocation.setLatitude(start.latitude);
+        currentLocation.setLongitude(start.latitude);
 
         Geocoder geocoder;
         List<Address> addresses;
