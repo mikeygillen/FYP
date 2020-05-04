@@ -47,7 +47,6 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
     private String currentUserId = mUser.getUid();
     private DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUserId);
-    private DatabaseReference mUserFollowing = mUserRef.child("Following");
     private String currentEmail;
 
     public static void setPreferenceValues(int seekDistanceValue, int seekPaceValue) {
@@ -138,16 +137,14 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
                                 int runs = new Integer(result.child("Total Runs").getValue().toString());
                                 double aDistance = Math.round(dis / runs);
 
-                                Log.d(TAG, "onDataChange: aPace = " + aPace);
-
                                 User user1 = new User(name, email, dis, aDistance, aPace, runs);
                                 userList.add(user1);
-                                Log.d(TAG, "onDataChange: Pace - " + user1.getPaceAvg());
+
                             }
                         }catch (NumberFormatException e) {
                             e.printStackTrace();
                             User user1 = new User("Joe", "blogs@gmail.com", 1000, 100, 5, 10);
-                            Log.d(TAG, "onDataChange: user1 - " + user1.getName());
+
                             userList.add(user1);
                         }
                     }
@@ -205,10 +202,10 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private void sortDistance() {
         Log.d(TAG, "filterDistance Begin");
         for(User user : userList){
-            Log.d(TAG, "sortDistance: User Distance Avg. = " + user.getDistanceAvg());
+           // Log.d(TAG, "sortDistance: User Distance Avg. = " + user.getDistanceAvg());
             if (worst <= user.getDistanceAvg()  && user.getDistanceAvg() <= best){
                 mFilterList.add(user);
-                Log.d(TAG, "sortDistance: mFilterList = " + mFilterList);
+                //Log.d(TAG, "sortDistance: mFilterList = " + mFilterList);
             }
         }
     }
@@ -216,7 +213,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
     private void sortPace() {
         Log.d(TAG, "filterPace Begin");
         for(User user : userList){
-            Log.d(TAG, "sortDistance: User Pace Avg. = " + user.getPaceAvg());
+           // Log.d(TAG, "sortDistance: User Pace Avg. = " + user.getPaceAvg());
             if (worst <= user.getPaceAvg() && user.getPaceAvg() <= best){
                 mFilterList.add(user);
             }
@@ -227,7 +224,6 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
 
     private void initRecyclerView(ArrayList<User> list){
         Log.d(TAG, "initRecyclerView: Beginning");
-        Log.d(TAG, "initRecyclerView: ArrayList = " + list);
         recyclerView = findViewById(R.id.userRecyclerView);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
@@ -237,7 +233,7 @@ public class MatchedUserActivity extends AppCompatActivity implements UserAdapte
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
-        Log.d(TAG, "initRecyclerView: Beginning");
+        Log.d(TAG, "initRecyclerView: Finished");
     }
 
 
