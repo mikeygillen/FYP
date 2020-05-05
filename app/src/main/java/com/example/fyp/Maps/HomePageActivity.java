@@ -303,6 +303,7 @@ public class HomePageActivity extends AppCompatActivity implements Interface, St
                         Log.d(TAG, "Update user totals: FAILED " + e);
                         e.printStackTrace();
                     }
+
                 }
             });
             alertDialogBuilder.setNegativeButton("Abandon", new DialogInterface.OnClickListener() {

@@ -196,7 +196,7 @@ public class EditProfileFragment extends Fragment {
         if (validate()) {
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle("Warning");
+            alertDialogBuilder.setTitle(" ");
             alertDialogBuilder.setMessage("Are you sure you want to update details?");
             alertDialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
