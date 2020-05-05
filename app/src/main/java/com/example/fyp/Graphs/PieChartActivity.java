@@ -127,7 +127,7 @@ public class PieChartActivity extends AppCompatActivity {
         ArrayList<? extends String> userTimes = intent.getParcelableArrayListExtra("user_times");
 
         int u=0, f=0, t=0, o=0;
-        String under="< 15min", ten="15-25min", twenty="25-45min", over="45min+";
+        String under="<15min", ten="15-25min", twenty="25-45min", over="45min+";
 
         for (int i = 0; i<userTimes.size(); i++){
             String segments[] = userTimes.get(i).split(":");
@@ -164,7 +164,7 @@ public class PieChartActivity extends AppCompatActivity {
         Log.d(TAG, "sortDays: userDays = " + userDays);
 
             int m=0, t=0, w=0, th=0, f=0, s=0, su=0;
-            String monday="Monday", tuesday="Tuesday", wednesday="Wednesday", thursday="Thursday", friday="Friday", saturday="Saturday", sunday="Sunday";
+            String monday="Mon", tuesday="Tue", wednesday="Wed", thursday="Thu", friday="Fri", saturday="Sat", sunday="Sun";
 
             for (int i = 0; i<userDays.size(); i++){
                 String segments[] = userDays.get(i).split(",");
